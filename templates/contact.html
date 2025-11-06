@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add a Product - Ingredient Checker</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .navbar {
+            background: rgba(255,255,255,0.1);
+            padding: 12px 0;
+            margin-bottom: 24px;
+            border-radius: 8px;
+            backdrop-filter: blur(10px);
+        }
+        .navbar-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 16px;
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+            padding: 8px 12px;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+        .navbar a:hover { background: rgba(255,255,255,0.2); }
+        .navbar-separator { color: rgba(255,255,255,0.3); }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+            padding: 40px;
+        }
+        h1 { font-size: 32px; margin-bottom: 16px; color: #333; }
+        h2 { font-size: 20px; margin-top: 24px; margin-bottom: 12px; color: #667eea; border-bottom: 2px solid #667eea; padding-bottom: 8px; }
+        p { line-height: 1.8; color: #555; margin-bottom: 16px; }
+        ul, ol { margin-left: 20px; line-height: 1.8; }
+        li { margin-bottom: 8px; color: #555; }
+        label { display: block; font-weight: bold; margin-bottom: 8px; color: #333; margin-top: 16px; }
+        input, textarea { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 4px; font-family: inherit; margin-bottom: 16px; }
+        input[type="submit"] { background: #667eea; color: white; cursor: pointer; font-weight: bold; }
+        input[type="submit"]:hover { background: #764ba2; }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 24px;
+            padding: 10px 16px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+        .back-link:hover { background: #764ba2; }
+        .info-box { padding: 12px; background: #f0f0f0; border-radius: 4px; margin: 12px 0; }
+        .warning-box { padding: 12px; background: #fff3cd; border-left: 4px solid #ffc107; margin: 12px 0; }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <div class="navbar-container">
+            <a href="/">🏠 Home</a>
+            <span class="navbar-separator">|</span>
+            <a href="/about">ℹ️ About</a>
+            <span class="navbar-separator">|</span>
+            <a href="/privacy">🔒 Privacy</a>
+            <span class="navbar-separator">|</span>
+            <a href="/terms">📋 Terms</a>
+            <span class="navbar-separator">|</span>
+            <a href="/contact">📧 Contact</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <a href="/" class="back-link">← Back to Home</a>
+
+        <div style="display: flex; gap: 12px; margin-bottom: 24px; border-bottom: 2px solid #e0e0e0;">
+            <button style="padding: 12px 24px; background: #667eea; color: white; border: none; cursor: pointer; font-size: 16px; border-radius: 4px 4px 0 0; font-weight: bold;" onclick="switchLanguage('en', event)">English</button>
+            <button style="padding: 12px 24px; background: transparent; color: #333; border: none; cursor: pointer; font-size: 16px;" onclick="switchLanguage('ko', event)">한국어</button>
+        </div>
+
+        <div id="en" style="display: block;">
+            <h1>Add a Product</h1>
+            <p>Help us expand our database! If you'd like to add a product to our ingredient detector, please provide the information below and submit your request.</p>
+
+            <h2>📍 How to Submit</h2>
+            <ol>
+                <li>Take a clear photo of the product packaging showing the product name</li>
+                <li>Include a photo showing the ingredient list on the back</li>
+                <li>Include a photo showing the barcode</li>
+                <li>Fill out the form below</li>
+                <li>Click "Send via Email" and attach the photos</li>
+            </ol>
+
+            <div class="warning-box">
+                <strong>⚠️ Important:</strong> Clicking the button below will open your email client. Please attach the 3 photos when sending.
+            </div>
+
+            <form id="contactForm">
+                <label for="productName">Product Name *</label>
+                <input type="text" id="productName" placeholder="e.g., Product Name" required>
+
+                <label for="email">Your Email (Optional)</label>
+                <input type="email" id="email" placeholder="your.email@example.com">
+
+                <label for="message">Additional Information</label>
+                <textarea id="message" rows="4" placeholder="Share any additional details about the product..."></textarea>
+
+                <div class="info-box">
+                    <strong>📸 Photos to attach:</strong>
+                    <ul>
+                        <li>Photo 1: Product front (showing product name)</li>
+                        <li>Photo 2: Back of product (showing full ingredient list)</li>
+                        <li>Photo 3: Barcode</li>
+                    </ul>
+                </div>
+
+                <input type="submit" value="Send via Email">
+            </form>
+        </div>
+
+        <div id="ko" style="display: none;">
+            <h1>상품 추가하기</h1>
+            <p>우리 데이터베이스 확대를 도와주세요! 원재료 검출 서비스에 추가하고 싶은 상품이 있다면 아래 정보를 작성하여 제출해주세요.</p>
+
+            <h2>📍 제출 방법</h2>
+            <ol>
+                <li>상품명이 보이도록 제품 포장 사진 촬영</li>
+                <li>뒷면의 원재료명이 보이도록 사진 촬영</li>
+                <li>바코드가 보이도록 사진 촬영</li>
+                <li>아래 양식을 작성</li>
+                <li>"이메일로 전송" 버튼 클릭 후 사진 3장 첨부</li>
+            </ol>
+
+            <div class="warning-box">
+                <strong>⚠️ 중요:</strong> 아래 버튼을 클릭하면 메일 클라이언트가 열립니다. 사진 3장을 첨부하여 보내주세요.
+            </div>
+
+            <form id="contactFormKo">
+                <label for="productNameKo">상품명 *</label>
+                <input type="text" id="productNameKo" placeholder="예: 제품명 입력" required>
+
+                <label for="emailKo">이메일 (선택사항)</label>
+                <input type="email" id="emailKo" placeholder="your.email@example.com">
+
+                <label for="messageKo">추가 정보</label>
+                <textarea id="messageKo" rows="4" placeholder="제품에 대한 추가 정보를 입력해주세요..."></textarea>
+
+                <div class="info-box">
+                    <strong>📸 첨부할 사진:</strong>
+                    <ul>
+                        <li>사진 1: 제품 앞면 (상품명이 보이도록)</li>
+                        <li>사진 2: 제품 뒷면 (원재료명 전체가 보이도록)</li>
+                        <li>사진 3: 바코드</li>
+                    </ul>
+                </div>
+
+                <input type="submit" value="이메일로 전송">
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function switchLanguage(lang, event) {
+            event.preventDefault();
+            document.getElementById('en').style.display = lang === 'en' ? 'block' : 'none';
+            document.getElementById('ko').style.display = lang === 'ko' ? 'block' : 'none';
+            const buttons = event.target.parentElement.querySelectorAll('button');
+            buttons.forEach(btn => { btn.style.background = 'transparent'; btn.style.color = '#333'; btn.style.fontWeight = 'normal'; });
+            event.target.style.background = '#667eea';
+            event.target.style.color = 'white';
+            event.target.style.fontWeight = 'bold';
+        }
+
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const productName = document.getElementById('productName').value;
+            const email = document.getElementById('email').value;
+            const message = document.getElementById('message').value;
+            
+            const body = `Product Name: ${productName}\n\nAdditional Information:\n${message}\n\nEmail: ${email || 'Not provided'}\n\nPlease attach the following photos:\n1. Product front (showing product name)\n2. Back of product (showing ingredients)\n3. Barcode`;
+            
+            window.location.href = `mailto:contact.scaneat@gmail.com?subject=${encodeURIComponent('New Product Submission')}&body=${encodeURIComponent(body)}`;
+        });
+
+        document.getElementById('contactFormKo').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const productName = document.getElementById('productNameKo').value;
+            const email = document.getElementById('emailKo').value;
+            const message = document.getElementById('messageKo').value;
+            
+            const body = `상품명: ${productName}\n\n추가 정보:\n${message}\n\n이메일: ${email || '제공하지 않음'}\n\n다음 사진을 첨부해주세요:\n1. 제품 앞면 (상품명)\n2. 제품 뒷면 (원재료명)\n3. 바코드`;
+            
+            window.location.href = `mailto:contact.scaneat@gmail.com?subject=${encodeURIComponent('새로운 상품 제출')}&body=${encodeURIComponent(body)}`;
+        });
+    </script>
+</body>
+</html>

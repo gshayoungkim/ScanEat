@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Privacy Policy - Ingredient Checker</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .navbar {
+            background: rgba(255,255,255,0.1);
+            padding: 12px 0;
+            margin-bottom: 24px;
+            border-radius: 8px;
+            backdrop-filter: blur(10px);
+        }
+        .navbar-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 16px;
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+            padding: 8px 12px;
+            border-radius: 4px;
+            transition: all 0.3s;
+        }
+        .navbar a:hover { background: rgba(255,255,255,0.2); }
+        .navbar-separator { color: rgba(255,255,255,0.3); }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+            padding: 40px;
+        }
+        h1 { font-size: 32px; margin-bottom: 8px; color: #333; }
+        .last-updated { color: #999; font-size: 12px; margin-bottom: 24px; }
+        h2 { font-size: 20px; margin-top: 24px; margin-bottom: 12px; color: #667eea; border-bottom: 2px solid #667eea; padding-bottom: 8px; }
+        p { line-height: 1.8; color: #555; margin-bottom: 16px; }
+        ul { margin-left: 20px; line-height: 1.8; }
+        li { margin-bottom: 8px; color: #555; }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 24px;
+            padding: 10px 16px;
+            background: #667eea;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+        .back-link:hover { background: #764ba2; }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <div class="navbar-container">
+            <a href="/">🏠 Home</a>
+            <span class="navbar-separator">|</span>
+            <a href="/about">ℹ️ About</a>
+            <span class="navbar-separator">|</span>
+            <a href="/privacy">🔒 Privacy</a>
+            <span class="navbar-separator">|</span>
+            <a href="/terms">📋 Terms</a>
+            <span class="navbar-separator">|</span>
+            <a href="/contact">📧 Contact</a>
+        </div>
+    </div>
+
+    <div class="container">
+        <a href="/" class="back-link">← Back to Home</a>
+
+        <div style="display: flex; gap: 12px; margin-bottom: 24px; border-bottom: 2px solid #e0e0e0;">
+            <button style="padding: 12px 24px; background: #667eea; color: white; border: none; cursor: pointer; font-size: 16px; border-radius: 4px 4px 0 0; font-weight: bold;" onclick="switchLanguage('en', event)">English</button>
+            <button style="padding: 12px 24px; background: transparent; color: #333; border: none; cursor: pointer; font-size: 16px;" onclick="switchLanguage('ko', event)">한국어</button>
+        </div>
+
+        <div id="en" style="display: block;">
+            <h1>Privacy Policy</h1>
+            <p class="last-updated">Last Updated: November 2025</p>
+            <p>This Privacy Policy explains how Ingredient Checker collects, uses, and protects your information.</p>
+            
+            <h2>1. Information We Collect</h2>
+            <p>Our service does NOT collect personal information. We only collect:</p>
+            <ul>
+                <li>Product Report Numbers you enter (not stored)</li>
+                <li>Barcodes you search (not stored)</li>
+                <li>Anonymous usage data</li>
+            </ul>
+
+            <h2>2. Data Security</h2>
+            <p>We implement industry-standard security measures including SSL/TLS encryption.</p>
+
+            <h2>3. Contact</h2>
+            <p>For questions: <strong>contact.scaneat@gmail.com</strong></p>
+        </div>
+
+        <div id="ko" style="display: none;">
+            <h1>개인정보처리방침</h1>
+            <p class="last-updated">최종 수정일: 2025년 11월</p>
+            <p>이 개인정보처리방침은 원재료 검출 서비스가 정보를 수집, 사용, 보호하는 방법을 설명합니다.</p>
+            
+            <h2>1. 수집하는 정보</h2>
+            <p>우리 서비스는 개인정보를 수집하지 않습니다:</p>
+            <ul>
+                <li>입력한 품목보고번호 (저장하지 않음)</li>
+                <li>검색한 바코드 (저장하지 않음)</li>
+                <li>익명 사용 데이터</li>
+            </ul>
+
+            <h2>2. 데이터 보안</h2>
+            <p>SSL/TLS 암호화 등 업계 표준 보안 조치를 구현합니다.</p>
+
+            <h2>3. 문의</h2>
+            <p>문의: <strong>contact.scaneat@gmail.com</strong></p>
+        </div>
+    </div>
+
+    <script>
+        function switchLanguage(lang, event) {
+            event.preventDefault();
+            document.getElementById('en').style.display = lang === 'en' ? 'block' : 'none';
+            document.getElementById('ko').style.display = lang === 'ko' ? 'block' : 'none';
+            const buttons = event.target.parentElement.querySelectorAll('button');
+            buttons.forEach(btn => { btn.style.background = 'transparent'; btn.style.color = '#333'; btn.style.fontWeight = 'normal'; });
+            event.target.style.background = '#667eea';
+            event.target.style.color = 'white';
+            event.target.style.fontWeight = 'bold';
+        }
+    </script>
+</body>
+</html>
