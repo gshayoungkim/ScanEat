@@ -12,10 +12,12 @@ body {
 }
 
 .container {
-    max-width: 800px;
+    max-width: 1200px;
     margin: 0 auto;
+    padding: 0;
 }
 
+/* ===== HEADER ===== */
 header {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
@@ -67,60 +69,11 @@ header p {
     line-height: 1.4;
 }
 
-/* 모바일 반응형 */
-@media (max-width: 768px) {
-    header {
-        padding: 30px 15px;
-    }
-
-    .header-content {
-        flex-direction: column;
-        gap: 15px;
-    }
-
-    .header-text {
-        text-align: center;
-    }
-
-    header h1 {
-        font-size: 2rem;
-    }
-
-    header p {
-        font-size: 1rem;
-    }
-
-    .logo {
-        width: 80px;
-        height: 80px;
-    }
-}
-
-@media (max-width: 480px) {
-    header {
-        padding: 20px 10px;
-    }
-
-    header h1 {
-        font-size: 1.5rem;
-    }
-
-    header p {
-        font-size: 0.9rem;
-    }
-
-    .logo {
-        width: 70px;
-        height: 70px;
-    }
-}
-
-
-
+/* ===== INPUT GUIDE SECTION ===== */
 .input-guide-section {
     background: white;
-    padding: 15px 20px;
-    border-radius: 10px;
+    padding: 20px 25px;
+    border-radius: 15px;
     margin-bottom: 20px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
     border-left: 5px solid #667eea;
@@ -128,57 +81,66 @@ header p {
 
 .input-guide-section p {
     color: #333;
-    font-size: 0.9rem;
-    line-height: 1.4;
-    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.5;
+    margin: 8px 0;
 }
 
 .input-guide-section p:first-child {
-    margin-bottom: 5px;
+    margin-top: 0;
     font-weight: 500;
     color: #667eea;
+    font-size: 1rem;
 }
 
 .input-guide-section p:last-child {
-    font-size: 0.85rem;
+    margin-bottom: 0;
+    font-size: 0.9rem;
     color: #666;
 }
 
-
+/* ===== SEARCH SECTION ===== */
 .search-section {
-    background: white;
-    padding: 30px;
-    border-radius: 15px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
     display: flex;
-    gap: 10px;
-    margin-bottom: 30px;
+    gap: 12px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+    background: white;
+    padding: 20px 25px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
 }
 
-#searchInput {
+.search-section input {
     flex: 1;
+    min-width: 250px;
     padding: 15px 20px;
-    font-size: 1rem;
-    border: 2px solid #e0e0e0;
+    border: 1px solid #ddd;
     border-radius: 10px;
-    outline: none;
+    font-size: 1rem;
     transition: border-color 0.3s;
 }
 
-#searchInput:focus {
+.search-section input:focus {
+    outline: none;
     border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
 }
 
-#searchBtn {
-    padding: 15px 40px;
-    font-size: 1rem;
-    font-weight: bold;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
+.search-section button {
+    padding: 15px 30px;
     border: none;
     border-radius: 10px;
     cursor: pointer;
+    font-weight: bold;
+    white-space: nowrap;
     transition: transform 0.2s;
+    font-size: 1rem;
+}
+
+#searchBtn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
 }
 
 #searchBtn:hover {
@@ -189,6 +151,16 @@ header p {
     transform: translateY(0);
 }
 
+#helpBtn {
+    background: #f59e0b;
+    color: white;
+}
+
+#helpBtn:hover {
+    background: #d97706;
+}
+
+/* ===== LOADING ===== */
 .loading {
     text-align: center;
     padding: 40px;
@@ -213,17 +185,18 @@ header p {
     100% { transform: rotate(360deg); }
 }
 
+/* ===== ERROR MESSAGE ===== */
 .error-message {
     background: #ff6b6b;
     color: white;
     padding: 20px;
-    border-radius: 10px;
+    border-radius: 15px;
     text-align: center;
     font-weight: bold;
     margin-bottom: 20px;
 }
 
-/* 결과 박스 - Detected Ingredients와 Full Ingredient List를 포함 */
+/* ===== RESULTS ===== */
 .results {
     background: white;
     padding: 30px;
@@ -236,12 +209,6 @@ header p {
     margin-bottom: 25px;
     padding-bottom: 20px;
     border-bottom: 2px solid #f0f0f0;
-}
-
-.product-info h2 {
-    color: #333;
-    margin-bottom: 10px;
-    font-size: 1.3rem;
 }
 
 .product-name {
@@ -258,12 +225,7 @@ header p {
     font-style: italic;
 }
 
-.product-source::before {
-    content: "";
-    display: none;
-}
-
-/* Detected Ingredients 섹션 - 흰 박스 안에 유지 */
+/* ===== INGREDIENTS SECTION ===== */
 .ingredients-section {
     margin-bottom: 25px;
 }
@@ -337,7 +299,7 @@ header p {
     margin-bottom: 15px;
 }
 
-/* Full Ingredient List 섹션 - 흰 박스 안에 유지 */
+/* ===== RAW MATERIALS ===== */
 .raw-materials {
     padding-top: 20px;
     border-top: 2px solid #f0f0f0;
@@ -361,29 +323,24 @@ header p {
     font-size: 0.95rem;
 }
 
-/* 주의 사항 섹션 - 최대 너비 제한 */
+/* ===== DISCLAIMER SECTION ===== */
 .disclaimer-section {
     background: #fff9e6;
-    padding: 25px;
+    padding: 30px;
     border-radius: 15px;
     border-left: 5px solid #ffc107;
     box-shadow: 0 5px 15px rgba(255, 193, 7, 0.15);
-    max-width: 800px;
-    margin: 0 auto;
 }
 
 .disclaimer-section h3 {
     color: #f57f17;
     margin-bottom: 20px;
     font-size: 1.2rem;
-    display: flex;
-    align-items: center;
-    gap: 10px;
 }
 
 .disclaimer-item {
-    margin-bottom: 18px;
-    padding-bottom: 18px;
+    margin-bottom: 20px;
+    padding-bottom: 20px;
     border-bottom: 1px solid #ffe082;
 }
 
@@ -423,77 +380,7 @@ header p {
     font-style: italic;
 }
 
-.hidden {
-    display: none !important;
-}
-
-/* 반응형 디자인 */
-/* 모바일 반응형 */
-@media (max-width: 768px) {
-    header {
-        padding: 30px 15px;
-    }
-
-    .header-content {
-        flex-direction: column;
-        gap: 15px;
-    }
-
-    .header-text {
-        text-align: center;
-    }
-
-    header h1 {
-        font-size: 2rem;
-    }
-
-    header p {
-        font-size: 1rem;
-    }
-
-    .logo {
-        width: 80px;
-        height: 80px;
-    }
-}
-
-@media (max-width: 480px) {
-    header {
-        padding: 20px 10px;
-    }
-
-    header h1 {
-        font-size: 1.5rem;
-    }
-
-    header p {
-        font-size: 0.9rem;
-    }
-
-    .logo {
-        width: 70px;
-        height: 70px;
-    }
-}
-/* 가이드 버튼 */
-#helpBtn {
-    padding: 15px 25px;
-    font-size: 1rem;
-    font-weight: bold;
-    background: #f59e0b;
-    color: white;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: background 0.3s;
-    white-space: nowrap;
-}
-
-#helpBtn:hover {
-    background: #d97706;
-}
-
-/* 모달 */
+/* ===== MODAL ===== */
 .modal {
     position: fixed;
     top: 0;
@@ -616,21 +503,83 @@ header p {
     margin-bottom: 8px;
 }
 
-/* 반응형 */
-@media (max-width: 600px) {
+/* ===== UTILITY ===== */
+.hidden {
+    display: none !important;
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+    header {
+        padding: 30px 15px;
+    }
+
+    .header-content {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .header-text {
+        text-align: center;
+    }
+
+    header h1 {
+        font-size: 2rem;
+    }
+
+    header p {
+        font-size: 1rem;
+    }
+
+    .logo {
+        width: 80px;
+        height: 80px;
+    }
+
     .search-section {
         flex-direction: column;
     }
-    
+
     #helpBtn {
         width: 100%;
     }
-    
+
+    .results {
+        padding: 20px;
+    }
+
+    .disclaimer-section {
+        padding: 20px;
+    }
+}
+
+@media (max-width: 480px) {
+    header {
+        padding: 20px 10px;
+    }
+
+    header h1 {
+        font-size: 1.5rem;
+    }
+
+    header p {
+        font-size: 0.9rem;
+    }
+
+    .logo {
+        width: 70px;
+        height: 70px;
+    }
+
+    .search-section input {
+        min-width: 100%;
+    }
+
     .modal-content {
         padding: 30px 20px;
         max-width: 95%;
     }
-    
+
     .guide-content h2 {
         font-size: 1.3rem;
     }
