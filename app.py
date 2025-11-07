@@ -683,6 +683,57 @@ def terms():
 def contact():
     return render_template('contact.html')
 
+@app.route('/api/request-product', methods=['POST'])
+def request_product():
+    """사용자가 요청한 제품 저장"""
+    data = request.get_json()
+    
+    try:
+        product_name = data.get('productName', '').strip()
+        product_code = data.get('productCode', '').strip()
+        barcode = data.get('barcode', '').strip()
+        
+        if not product_name:
+            return jsonify({'error': '상품명은 필수입니다.'}), 400
+        
+        # Supabase에 저장
+        response = supabase.table('product_requests').insert({
+            'product_name': product_name,
+            'product_code': product_code if product_code else None,
+            'barcode': barcode if barcode else None
+        }).execute()
+        
+        return jsonify({
+            'status': 'success',
+            'message': '상품 요청이 접수되었습니다. 감사합니다!'
+        }), 201
+        
+    except Exception as e:
+        print(f"[Product Request Error] {str(e)}")
+        return jsonify({'error': 'Failed to save request'}), 500
+
+
+@app.route('/product-requests', methods=['GET'])
+def product_requests_page():
+    """게시판 페이지"""
+    return render_template('product_requests.html')
+
+@app.route('/api/product-requests', methods=['GET'])
+def get_product_requests():
+    """요청 목록 조회"""
+    try:
+        limit = request.args.get('limit', 10, type=int)
+        
+        response = supabase.table('product_requests')\
+            .select('*')\
+            .order('created_at', desc=True)\
+            .limit(limit)\
+            .execute()
+        
+        return jsonify(response.data)
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
 
 if __name__ == '__main__':
     import os

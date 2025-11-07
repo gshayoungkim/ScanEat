@@ -201,10 +201,8 @@ async function searchProduct() {
         return;
     }
     
-    // 하이픈 자동 제거
     searchValue = searchValue.replace(/-/g, '');
     
-    // 최종 검증
     if (!searchValue || !/^\d+$/.test(searchValue)) {
         showError('⚠️ Please enter numbers only\n숫자만 입력해주세요');
         return;
@@ -221,14 +219,30 @@ async function searchProduct() {
             body: JSON.stringify({ searchValue })
         });
         const data = await response.json();
-        if (!response.ok) throw new Error(data.error || 'Search failed');
+        
+        // ★ 에러 메시지 (이미 /contact로 연결됨) ★
+        if (data.error) {
+        showError(
+            `⚠️ Product not found in any database. 공공 데이터 및 자체 데이터에서 찾을 수 없습니다.<br>` +
+            `Please request the product <a href="/contact">here</a>. 상품명을 <a href="/contact">상품 요청</a>에 남겨주세요.`
+        );
+
+            return;
+        }
+        
+        if (!response.ok) {
+            throw new Error(data.error || 'Search failed');
+        }
+        
         displayResults(data);
     } catch (error) {
-        showError(error.message);
+        showError(`❌ ${error.message}`);
     } finally {
         hideLoading();
     }
 }
+
+
 
 
         function openGuideModal() {
@@ -296,7 +310,10 @@ async function searchProduct() {
 
         function showLoading() { loading.classList.remove('hidden'); }
         function hideLoading() { loading.classList.add('hidden'); }
-        function showError(message) { errorMessage.textContent = message; errorMessage.classList.remove('hidden'); }
+        function showError(message) { 
+            errorMessage.innerHTML = message;  // textContent → innerHTML로 변경
+            errorMessage.classList.remove('hidden'); 
+        }
         function hideError() { errorMessage.classList.add('hidden'); }
         function showResults() { results.classList.remove('hidden'); }
         function hideResults() { results.classList.add('hidden'); }

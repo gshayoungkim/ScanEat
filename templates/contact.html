@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add a Product - Ingredient Checker</title>
+    <title>Product Requests Board - Ingredient Checker</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
@@ -49,10 +49,8 @@
         h1 { font-size: 32px; margin-bottom: 16px; color: #333; }
         h2 { font-size: 20px; margin-top: 24px; margin-bottom: 12px; color: #667eea; border-bottom: 2px solid #667eea; padding-bottom: 8px; }
         p { line-height: 1.8; color: #555; margin-bottom: 16px; }
-        ul, ol { margin-left: 20px; line-height: 1.8; }
-        li { margin-bottom: 8px; color: #555; }
         label { display: block; font-weight: bold; margin-bottom: 8px; color: #333; margin-top: 16px; }
-        input, textarea { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 4px; font-family: inherit; margin-bottom: 16px; }
+        input, textarea { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 4px; font-family: inherit; margin-bottom: 16px; box-sizing: border-box; }
         input[type="submit"] { background: #667eea; color: white; cursor: pointer; font-weight: bold; }
         input[type="submit"]:hover { background: #764ba2; }
         .back-link {
@@ -65,8 +63,25 @@
             border-radius: 4px;
         }
         .back-link:hover { background: #764ba2; }
-        .info-box { padding: 12px; background: #f0f0f0; border-radius: 4px; margin: 12px 0; }
-        .warning-box { padding: 12px; background: #fff3cd; border-left: 4px solid #ffc107; margin: 12px 0; }
+        .form-section { background: #f9f9f9; padding: 24px; border-radius: 8px; margin-bottom: 32px; border-left: 4px solid #667eea; }
+        .board-section { margin-top: 40px; }
+        .request-item { background: #f0f4ff; padding: 16px; border-radius: 8px; margin-bottom: 12px; border-left: 4px solid #667eea; }
+        .request-header { display: flex; justify-content: space-between; align-items: start; gap: 12px; }
+        .request-title { font-weight: bold; font-size: 16px; color: #333; }
+        .request-details { margin-top: 8px; font-size: 13px; color: #666; }
+        .request-date { font-size: 12px; color: #999; margin-top: 8px; }
+        .status-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+        .status-pending { background: #fff3cd; color: #856404; }
+        .status-completed { background: #d4edda; color: #155724; }
+        .status-rejected { background: #f8d7da; color: #721c24; }
+        .message-box { padding: 12px; border-radius: 4px; margin-bottom: 16px; }
+        .message-success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .message-error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .message-info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        .empty-state { text-align: center; padding: 40px; color: #999; }
+        .tab-buttons { display: flex; gap: 12px; margin-bottom: 24px; border-bottom: 2px solid #e0e0e0; }
+        .tab-btn { padding: 12px 24px; background: transparent; color: #333; border: none; cursor: pointer; font-size: 16px; border-radius: 4px 4px 0 0; }
+        .tab-btn.active { background: #667eea; color: white; font-weight: bold; }
     </style>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9118651721155215"
      crossorigin="anonymous"></script>
@@ -89,128 +104,188 @@
     <div class="container">
         <a href="/" class="back-link">← Back to Home</a>
 
-        <div style="display: flex; gap: 12px; margin-bottom: 24px; border-bottom: 2px solid #e0e0e0;">
-            <button style="padding: 12px 24px; background: #667eea; color: white; border: none; cursor: pointer; font-size: 16px; border-radius: 4px 4px 0 0; font-weight: bold;" onclick="switchLanguage('en', event)">English</button>
-            <button style="padding: 12px 24px; background: transparent; color: #333; border: none; cursor: pointer; font-size: 16px;" onclick="switchLanguage('ko', event)">한국어</button>
+        <!-- 언어 탭 -->
+        <div class="tab-buttons">
+            <button class="tab-btn active" onclick="switchLanguage('en', event)">English</button>
+            <button class="tab-btn" onclick="switchLanguage('ko', event)">한국어</button>
         </div>
 
+        <!-- 영어 버전 -->
         <div id="en" style="display: block;">
-            <h1>Add a Product</h1>
-            <p>Help us expand our database! If you'd like to add a product to our ingredient detector, please provide the information below and submit your request.</p>
+            <h1>📝 Product Requests Board</h1>
+            <p>Help us expand our database! If a product is not found in our system, you can request it here.</p>
 
-            <h2>📍 How to Submit</h2>
-            <ol>
-                <li>Take a clear photo of the product packaging showing the product name</li>
-                <li>Include a photo showing the ingredient list on the back</li>
-                <li>Include a photo showing the barcode</li>
-                <li>Fill out the form below</li>
-                <li>Click "Send via Email" and attach the photos</li>
-                <li>or send email to 'contact.scaneat@gmail.com'</li>
+            <div class="form-section">
+                <h2>Request a Product</h2>
+                <div id="messageEn"></div>
+                <form id="productForm">
+                    <label for="productName">Product Name <span style="color: red;">*</span></label>
+                    <input type="text" id="productName" placeholder="e.g., Lotte Peppero" required>
 
-            </ol>
+                    <label for="productCode">Product Report Number (Optional)</label>
+                    <input type="text" id="productCode" placeholder="e.g., 20020464088">
 
-            <div class="warning-box">
-                <strong>⚠️ Important:</strong> Clicking the button below will open your email client. Please attach the 3 photos when sending.
+                    <label for="barcode">Barcode Number (Optional)</label>
+                    <input type="text" id="barcode" placeholder="e.g., 8801019602498">
+
+                    <input type="submit" value="Submit Request">
+                </form>
             </div>
 
-            <form id="contactForm">
-                <label for="productName">Product Name *</label>
-                <input type="text" id="productName" placeholder="e.g., Product Name" required>
-
-                <label for="email">Your Email (Optional)</label>
-                <input type="email" id="email" placeholder="your.email@example.com">
-
-                <label for="message">Additional Information</label>
-                <textarea id="message" rows="4" placeholder="Share any additional details about the product..."></textarea>
-
-                <div class="info-box">
-                    <strong>📸 Photos to attach:</strong>
-                    <ul>
-                        <li>Photo 1: Product front (showing product name)</li>
-                        <li>Photo 2: Back of product (showing full ingredient list)</li>
-                        <li>Photo 3: Barcode</li>
-                    </ul>
+            <div class="board-section">
+                <h2>Recent Requests</h2>
+                <div id="requestListEn">
+                    <div class="empty-state">Loading...</div>
                 </div>
-
-                <input type="submit" value="Send via Email">
-            </form>
+            </div>
         </div>
 
+        <!-- 한국어 버전 -->
         <div id="ko" style="display: none;">
-            <h1>상품 추가하기</h1>
-            <p>우리 데이터베이스 확대를 도와주세요! 원재료 검출 서비스에 추가하고 싶은 상품이 있다면 아래 정보를 작성하여 제출해주세요.</p>
+            <h1>📝 상품 요청 게시판</h1>
+            <p>우리의 데이터베이스를 확대하는데 도움을 주세요! 시스템에서 찾을 수 없는 상품을 여기서 요청할 수 있습니다.</p>
 
-            <h2>📍 제출 방법</h2>
-            <ol>
-                <li>상품명이 보이도록 제품 포장 사진 촬영</li>
-                <li>뒷면의 원재료명이 보이도록 사진 촬영</li>
-                <li>바코드가 보이도록 사진 촬영</li>
-                <li>아래 양식을 작성</li>
-                <li>"이메일로 전송" 버튼 클릭 후 사진 3장 첨부</li>
-                <li>또는 'contact.scaneat@gmail.com'로 이메일을 전송</li>
-            </ol>
+            <div class="form-section">
+                <h2>상품 요청하기</h2>
+                <div id="messageKo"></div>
+                <form id="productFormKo">
+                    <label for="productNameKo">상품명 <span style="color: red;">*</span></label>
+                    <input type="text" id="productNameKo" placeholder="예: 롯데 빼빼로" required>
 
-            <div class="warning-box">
-                <strong>⚠️ 중요:</strong> 아래 버튼을 클릭하면 메일 클라이언트가 열립니다. 사진 3장을 첨부하여 보내주세요.
+                    <label for="productCodeKo">품목보고번호 (선택사항)</label>
+                    <input type="text" id="productCodeKo" placeholder="예: 20020464088">
+
+                    <label for="barcodeKo">바코드번호 (선택사항)</label>
+                    <input type="text" id="barcodeKo" placeholder="예: 8801019602498">
+
+                    <input type="submit" value="요청 제출">
+                </form>
             </div>
 
-            <form id="contactFormKo">
-                <label for="productNameKo">상품명 *</label>
-                <input type="text" id="productNameKo" placeholder="예: 제품명 입력" required>
-
-                <label for="emailKo">이메일 (선택사항)</label>
-                <input type="email" id="emailKo" placeholder="your.email@example.com">
-
-                <label for="messageKo">추가 정보</label>
-                <textarea id="messageKo" rows="4" placeholder="제품에 대한 추가 정보를 입력해주세요..."></textarea>
-
-                <div class="info-box">
-                    <strong>📸 첨부할 사진:</strong>
-                    <ul>
-                        <li>사진 1: 제품 앞면 (상품명이 보이도록)</li>
-                        <li>사진 2: 제품 뒷면 (원재료명 전체가 보이도록)</li>
-                        <li>사진 3: 바코드</li>
-                    </ul>
+            <div class="board-section">
+                <h2>최근 요청 목록</h2>
+                <div id="requestListKo">
+                    <div class="empty-state">로딩 중...</div>
                 </div>
-
-                <input type="submit" value="이메일로 전송">
-            </form>
+            </div>
         </div>
     </div>
 
     <script>
+        let currentLang = 'en';
+
         function switchLanguage(lang, event) {
             event.preventDefault();
+            currentLang = lang;
             document.getElementById('en').style.display = lang === 'en' ? 'block' : 'none';
             document.getElementById('ko').style.display = lang === 'ko' ? 'block' : 'none';
-            const buttons = event.target.parentElement.querySelectorAll('button');
-            buttons.forEach(btn => { btn.style.background = 'transparent'; btn.style.color = '#333'; btn.style.fontWeight = 'normal'; });
-            event.target.style.background = '#667eea';
-            event.target.style.color = 'white';
-            event.target.style.fontWeight = 'bold';
+            
+            const buttons = event.target.parentElement.querySelectorAll('.tab-btn');
+            buttons.forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            loadRequests();
         }
 
-        document.getElementById('contactForm').addEventListener('submit', function(e) {
+        // 폼 제출
+        document.getElementById('productForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-            const productName = document.getElementById('productName').value;
-            const email = document.getElementById('email').value;
-            const message = document.getElementById('message').value;
-            
-            const body = `Product Name: ${productName}\n\nAdditional Information:\n${message}\n\nEmail: ${email || 'Not provided'}\n\nPlease attach the following photos:\n1. Product front (showing product name)\n2. Back of product (showing ingredients)\n3. Barcode`;
-            
-            window.location.href = `mailto:contact.scaneat@gmail.com?subject=${encodeURIComponent('New Product Submission')}&body=${encodeURIComponent(body)}`;
+            await submitRequest('en');
         });
 
-        document.getElementById('contactFormKo').addEventListener('submit', function(e) {
+        document.getElementById('productFormKo').addEventListener('submit', async function(e) {
             e.preventDefault();
-            const productName = document.getElementById('productNameKo').value;
-            const email = document.getElementById('emailKo').value;
-            const message = document.getElementById('messageKo').value;
-            
-            const body = `상품명: ${productName}\n\n추가 정보:\n${message}\n\n이메일: ${email || '제공하지 않음'}\n\n다음 사진을 첨부해주세요:\n1. 제품 앞면 (상품명)\n2. 제품 뒷면 (원재료명)\n3. 바코드`;
-            
-            window.location.href = `mailto:contact.scaneat@gmail.com?subject=${encodeURIComponent('새로운 상품 제출')}&body=${encodeURIComponent(body)}`;
+            await submitRequest('ko');
         });
+
+        async function submitRequest(lang) {
+            const nameId = lang === 'en' ? 'productName' : 'productNameKo';
+            const codeId = lang === 'en' ? 'productCode' : 'productCodeKo';
+            const barcodeId = lang === 'en' ? 'barcode' : 'barcodeKo';
+            const messageId = lang === 'en' ? 'messageEn' : 'messageKo';
+            const formId = lang === 'en' ? 'productForm' : 'productFormKo';
+
+            const productName = document.getElementById(nameId).value.trim();
+            const productCode = document.getElementById(codeId).value.trim();
+            const barcode = document.getElementById(barcodeId).value.trim();
+
+            try {
+                const response = await fetch('/api/request-product', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ productName, productCode, barcode })
+                });
+
+                const data = await response.json();
+                const messageDiv = document.getElementById(messageId);
+
+                if (response.ok) {
+                    messageDiv.className = 'message-box message-success';
+                    messageDiv.innerHTML = '✓ ' + data.message;
+                    document.getElementById(formId).reset();
+                    setTimeout(() => loadRequests(), 500);
+                } else {
+                    messageDiv.className = 'message-box message-error';
+                    messageDiv.innerHTML = '✗ ' + data.error;
+                }
+                messageDiv.style.display = 'block';
+                setTimeout(() => messageDiv.style.display = 'none', 5000);
+            } catch (error) {
+                const messageDiv = document.getElementById(messageId);
+                messageDiv.className = 'message-box message-error';
+                messageDiv.innerHTML = '✗ Error: ' + error.message;
+                messageDiv.style.display = 'block';
+            }
+        }
+
+        async function loadRequests() {
+            try {
+                const response = await fetch('/api/product-requests?limit=20');
+                const data = await response.json();
+
+                const listEn = document.getElementById('requestListEn');
+                const listKo = document.getElementById('requestListKo');
+
+                if (data.length === 0) {
+                    listEn.innerHTML = '<div class="empty-state">No requests yet. Be the first to request a product!</div>';
+                    listKo.innerHTML = '<div class="empty-state">아직 요청이 없습니다. 첫 번째로 상품을 요청해주세요!</div>';
+                    return;
+                }
+
+                let html = '';
+                data.forEach(item => {
+                    const date = new Date(item.created_at).toLocaleDateString();
+                    const statusText = item.status === 'pending' ? 'Pending' : item.status === 'completed' ? 'Completed' : 'Rejected';
+                    const statusBadge = `<span class="status-badge status-${item.status}">${statusText}</span>`;
+
+                    const detailsEn = `${item.product_code ? `<div class="request-details">📌 Code: ${item.product_code}</div>` : ''}${item.barcode ? `<div class="request-details">📊 Barcode: ${item.barcode}</div>` : ''}`;
+                    const detailsKo = `${item.product_code ? `<div class="request-details">📌 코드: ${item.product_code}</div>` : ''}${item.barcode ? `<div class="request-details">📊 바코드: ${item.barcode}</div>` : ''}`;
+
+                    html += `
+                        <div class="request-item">
+                            <div class="request-header">
+                                <div style="flex: 1;">
+                                    <div class="request-title">${item.product_name}</div>
+                                    ${currentLang === 'en' ? detailsEn : detailsKo}
+                                    <div class="request-date">${date}</div>
+                                </div>
+                                ${statusBadge}
+                            </div>
+                        </div>
+                    `;
+                });
+
+                listEn.innerHTML = html;
+                listKo.innerHTML = html;
+            } catch (error) {
+                console.error('Failed to load requests:', error);
+                document.getElementById('requestListEn').innerHTML = '<div class="empty-state">Failed to load requests</div>';
+                document.getElementById('requestListKo').innerHTML = '<div class="empty-state">요청 로드 실패</div>';
+            }
+        }
+
+        // 초기 로드
+        loadRequests();
     </script>
 </body>
 </html>
