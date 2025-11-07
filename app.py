@@ -124,12 +124,22 @@ def find_ingredients(raw_materials):
 def search_custom_database(search_value):
     """Supabase에서 검색"""
     try:
+        # 방법 1: filter 체인 사용 (더 안정적)
         response = (
             supabase.table('custom_products')
             .select('*')
-            .or_(f"barcode.eq.{search_value},imrpt_no.eq.{search_value}")
+            .eq('barcode', search_value)
             .execute()
         )
+        
+        if not response.data or len(response.data) == 0:
+            # barcode에 없으면 imrpt_no로 검색
+            response = (
+                supabase.table('custom_products')
+                .select('*')
+                .eq('imrpt_no', search_value)
+                .execute()
+            )
         
         if response.data and len(response.data) > 0:
             product = response.data[0]
@@ -142,8 +152,11 @@ def search_custom_database(search_value):
                 }
             }
         return None
+        
     except Exception as e:
         print(f"[Supabase Error] {str(e)}")
+        import traceback
+        traceback.print_exc()
         return None
 
 def search_haccp_api(search_value):
