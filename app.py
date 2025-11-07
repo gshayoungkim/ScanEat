@@ -124,9 +124,12 @@ def find_ingredients(raw_materials):
 def search_custom_database(search_value):
     """Supabase에서 검색"""
     try:
-        response = supabase.table('custom_products').select('*').or_(
-            f"barcode.eq.{search_value},imrpt_no.eq.{search_value}"
-        ).execute()
+        response = (
+            supabase.table('custom_products')
+            .select('*')
+            .or_(f"barcode.eq.{search_value},imrpt_no.eq.{search_value}")
+            .execute()
+        )
         
         if response.data and len(response.data) > 0:
             product = response.data[0]
