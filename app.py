@@ -8,22 +8,30 @@ import re
 from html.parser import HTMLParser
 from datetime import datetime
 
+
 load_dotenv()
 
+
 app = Flask(__name__)
+
 
 # ★ Supabase 설정 ★
 SUPABASE_URL = os.getenv('SUPABASE_URL')
 SUPABASE_KEY = os.getenv('SUPABASE_KEY')
 supabase: Client = create_client(SUPABASE_URL, SUPABASE_KEY)
 
+
 # API 키
 SERVICE_KEY = os.getenv('SERVICE_KEY')
 FOODQR_ACCESS_KEY = os.getenv('FOODQR_ACCESS_KEY')
+FOOD_SAFETY_API_KEY = os.getenv('FOOD_SAFETY_API_KEY')  # C005 API용 키
+
 
 # API URL
 HACCP_API_URL = 'https://apis.data.go.kr/B553748/CertImgListServiceV3/getCertImgListServiceV3'
 FOOD_QR_API_URL = 'https://foodqr.kr/openapi/service/qr1007/F007'
+BARCODE_LINK_API_URL = 'http://openapi.foodsafetykorea.go.kr/api'  # C005 바코드연계제품정보
+
 
 # 카테고리별 원재료 매핑
 INGREDIENTS_TO_CHECK = {
@@ -118,9 +126,11 @@ print(f"\n{'='*60}")
 print("Environment Check:")
 print(f"SERVICE_KEY: {'✓ SET' if SERVICE_KEY else '✗ NOT SET'}")
 print(f"FOODQR_ACCESS_KEY: {'✓ SET' if FOODQR_ACCESS_KEY else '✗ NOT SET'}")
+print(f"FOOD_SAFETY_API_KEY: {'✓ SET' if FOOD_SAFETY_API_KEY else '✗ NOT SET'}")
 print(f"SUPABASE_URL: {'✓ SET' if SUPABASE_URL else '✗ NOT SET'}")
 print(f"SUPABASE_KEY: {'✓ SET' if SUPABASE_KEY else '✗ NOT SET'}")
 print(f"{'='*60}\n")
+
 
 class HTMLStripper(HTMLParser):
     """HTML 태그 제거"""
@@ -131,11 +141,14 @@ class HTMLStripper(HTMLParser):
         self.convert_charrefs = True
         self.text = []
 
+
     def handle_data(self, d):
         self.text.append(d)
 
+
     def get_data(self):
         return ''.join(self.text)
+
 
 def strip_html(html_text):
     """HTML 태그 제거 함수"""
@@ -150,6 +163,7 @@ def strip_html(html_text):
         text = re.sub(r'<[^>]+>', '', html_text)
         text = re.sub(r'\s+', ' ', text)
         return text.strip()
+
 
 def find_ingredients(raw_materials):
     """원재료명에서 해당하는 모든 원재료 검출"""
@@ -170,10 +184,10 @@ def find_ingredients(raw_materials):
     
     return found_ingredients
 
+
 def search_custom_database(search_value):
     """Supabase에서 검색"""
     try:
-        # 방법 1: filter 체인 사용 (더 안정적)
         response = (
             supabase.table('custom_products')
             .select('*')
@@ -182,7 +196,6 @@ def search_custom_database(search_value):
         )
         
         if not response.data or len(response.data) == 0:
-            # barcode에 없으면 imrpt_no로 검색
             response = (
                 supabase.table('custom_products')
                 .select('*')
@@ -207,6 +220,95 @@ def search_custom_database(search_value):
         import traceback
         traceback.print_exc()
         return None
+
+
+def search_barcode_link_api(barcode):
+    """
+    ★ C005 바코드연계제품정보 API로 바코드 → 품목보고번호 매핑 ★
+    """
+    try:
+        if not FOOD_SAFETY_API_KEY:
+            print("[C005] API Key not set")
+            return None
+        
+        # ✅ 올바른 URL 구성: 파라미터를 경로에 포함
+        # 형식: /api/{인증키}/C005/{dataType}/{startIdx}/{endIdx}/BAR_CD={바코드값}
+        url = f"{BARCODE_LINK_API_URL}/{FOOD_SAFETY_API_KEY}/C005/json/1/100/BAR_CD={barcode}"
+        
+        print(f"[C005] Searching barcode: {barcode}")
+        print(f"[C005] Request URL: {url}")
+        
+        # params 없이 직접 URL로 요청
+        response = requests.get(url, timeout=15)
+        
+        print(f"[C005] Status Code: {response.status_code}")
+        
+        if response.status_code != 200:
+            print(f"[C005] Failed with status {response.status_code}")
+            print(f"[C005] Response: {response.text[:500]}")
+            return None
+        
+        result = response.json()
+        print(f"[C005] Response: {result}")
+        
+        # 응답 구조: {"C005": {"total_count": "1", "row": [...], "RESULT": {...}}}
+        if result.get('C005'):
+            c005_data = result['C005']
+            
+            # 에러 코드 체크
+            result_info = c005_data.get('RESULT', {})
+            result_code = result_info.get('CODE')
+            result_msg = result_info.get('MSG')
+            
+            print(f"[C005] Result Code: {result_code}")
+            print(f"[C005] Result Message: {result_msg}")
+            
+            # INFO-000: 정상 처리
+            # INFO-200: 해당하는 데이터가 없습니다
+            if result_code == 'INFO-200':
+                print("[C005] No data found for this barcode")
+                return None
+            
+            if result_code and result_code != 'INFO-000':
+                print(f"[C005] API Error: {result_code} - {result_msg}")
+                return None
+            
+            rows = c005_data.get('row', [])
+            total_count = c005_data.get('total_count', '0')
+            
+            print(f"[C005] Total count: {total_count}")
+            
+            if rows and len(rows) > 0:
+                # 첫 번째 결과 사용
+                product = rows[0]
+                report_no = product.get('PRDLST_REPORT_NO')
+                product_name = product.get('PRDLST_NM', 'Unknown')
+                
+                print(f"[C005] ✓ Found mapping: {barcode} → {report_no}")
+                print(f"[C005] Product: {product_name}")
+                
+                return {
+                    'product_report_no': report_no,
+                    'product_name': product_name,
+                    'barcode': barcode,
+                    'manufacturer': product.get('BSSH_NM', ''),
+                    'product_type': product.get('PRDLST_DCNM', ''),
+                    'report_date': product.get('PRMS_DT', ''),
+                    'address': product.get('SITE_ADDR', '')
+                }
+        
+        print("[C005] No data found in response")
+        return None
+        
+    except requests.exceptions.Timeout:
+        print("[C005] Request timeout")
+        return None
+    except Exception as e:
+        print(f"[C005] Error: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return None
+
 
 def search_haccp_api(search_value):
     """HACCP API에서 검색"""
@@ -254,6 +356,7 @@ def search_haccp_api(search_value):
     except Exception as e:
         print(f"[HACCP] Error: {str(e)}")
         return None
+
 
 def search_foodqr_api(search_value):
     """Food QR API에서 검색"""
@@ -342,6 +445,7 @@ def search_foodqr_api(search_value):
     print(f"[FoodQR] ✗ All search methods failed")
     return None
 
+
 def extract_product_info_foodqr(product):
     """Food QR API 응답에서 제품 정보 추출"""
     
@@ -356,6 +460,7 @@ def extract_product_info_foodqr(product):
     
     return product_name, raw_materials
 
+
 @app.route('/test', methods=['GET'])
 def test():
     """API 연결 테스트"""
@@ -363,12 +468,15 @@ def test():
         'status': 'ok',
         'SERVICE_KEY_set': SERVICE_KEY is not None,
         'FOODQR_ACCESS_KEY_set': FOODQR_ACCESS_KEY is not None,
+        'FOOD_SAFETY_API_KEY_set': FOOD_SAFETY_API_KEY is not None,
         'SUPABASE_set': SUPABASE_URL is not None and SUPABASE_KEY is not None
     })
+
 
 @app.route('/')
 def index():
     return render_template('index.html')
+
 
 @app.route('/search', methods=['POST'])
 def search_product():
@@ -451,6 +559,63 @@ def search_product():
                 'foundIngredients': found_ingredients
             })
         
+        # ★ 4차: 88로 시작하는 바코드인 경우 C005 API로 품목번호 찾기 ★
+        if search_value.startswith('88'):
+            print("[Search] Step 4: Barcode detected (88 prefix) - trying C005 API...")
+            
+            barcode_mapping = search_barcode_link_api(search_value)
+            
+            if barcode_mapping:
+                product_report_no = barcode_mapping['product_report_no']
+                print(f"[Search] Step 5: Retrying with product report number: {product_report_no}")
+                
+                # 5차: 찾은 품목보고번호로 HACCP 재검색
+                print("[Search] Step 5-1: Retrying HACCP with mapped product number...")
+                haccp_retry = search_haccp_api(product_report_no)
+                
+                if haccp_retry:
+                    product = haccp_retry['product']
+                    product_name = product.get('prdlstNm', barcode_mapping['product_name'])
+                    raw_materials = product.get('rawmtrl', '')
+                    
+                    if raw_materials:
+                        found_ingredients = find_ingredients(raw_materials)
+                        return jsonify({
+                            'productName': product_name,
+                            'source': 'HACCP (via C005 Barcode Mapping)',
+                            'rawMaterials': raw_materials,
+                            'foundIngredients': found_ingredients,
+                            'mappingInfo': f"Barcode {search_value} → Product No. {product_report_no}"
+                        })
+                
+                # 6차: FoodQR 재검색
+                print("[Search] Step 5-2: Retrying FoodQR with mapped product number...")
+                foodqr_retry = search_foodqr_api(product_report_no)
+                
+                if foodqr_retry:
+                    product = foodqr_retry['product']
+                    product_name, raw_materials = extract_product_info_foodqr(product)
+                    
+                    if raw_materials:
+                        found_ingredients = find_ingredients(raw_materials)
+                        return jsonify({
+                            'productName': product_name,
+                            'source': 'FoodQR (via C005 Barcode Mapping)',
+                            'rawMaterials': raw_materials,
+                            'foundIngredients': found_ingredients,
+                            'mappingInfo': f"Barcode {search_value} → Product No. {product_report_no}"
+                        })
+                
+                # C005에서 제품명은 찾았지만 원재료 정보가 없는 경우
+                return jsonify({
+                    'productName': barcode_mapping['product_name'],
+                    'source': 'C005 Barcode Link API (Basic Info Only)',
+                    'foundIngredients': {},
+                    'rawMaterials': 'Product found via barcode, but detailed ingredient information is not available.',
+                    'manufacturer': barcode_mapping['manufacturer'],
+                    'productType': barcode_mapping['product_type']
+                })
+        
         print("[Search] All sources returned no results")
         return jsonify({'error': 'Product not found in any database.'}), 404
         
@@ -461,6 +626,7 @@ def search_product():
         import traceback
         traceback.print_exc()
         return jsonify({'error': 'Server error'}), 500
+
 
 @app.route('/add-product', methods=['POST'])
 def add_product():
@@ -479,7 +645,6 @@ def add_product():
         if not barcode and not imrpt_no:
             return jsonify({'error': 'Barcode or imrptNo required'}), 400
         
-        # Supabase에 저장
         response = supabase.table('custom_products').insert({
             'barcode': barcode if barcode else None,
             'imrpt_no': imrpt_no if imrpt_no else None,
@@ -497,24 +662,29 @@ def add_product():
     except Exception as e:
         print(f"[Supabase Error] {str(e)}")
         return jsonify({'error': f'Failed to add product: {str(e)}'}), 500
+
+
 @app.route('/about')
 def about():
     return render_template('about.html')
+
 
 @app.route('/privacy')
 def privacy():
     return render_template('privacy.html')
 
+
 @app.route('/terms')
 def terms():
     return render_template('terms.html')
+
 
 @app.route('/contact')
 def contact():
     return render_template('contact.html')
 
+
 if __name__ == '__main__':
     import os
     port = int(os.environ.get('PORT', 5000))
     app.run(debug=os.getenv('FLASK_ENV') == 'development', host='0.0.0.0', port=port)
-
