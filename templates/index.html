@@ -10,7 +10,6 @@
 <!-- Quagga2 라이브러리 (백업용) -->
 <script src="https://cdn.jsdelivr.net/npm/@ericblade/quagga2/dist/quagga.min.js"></script>
 <style>
-    /* 기존 스타일 유지 */
     #reader {
         width: 100%;
         max-width: 500px;
@@ -70,6 +69,7 @@
         border-radius: 12px;
         margin: 20px 0;
         display: none;
+        scroll-margin-top: 20px;
     }
     
     .scanner-section.active {
@@ -102,15 +102,6 @@
     #file-input {
         display: none;
     }
-    
-    /* 이미지 미리보기 추가 */
-    #image-preview {
-        max-width: 100%;
-        max-height: 300px;
-        margin: 10px auto;
-        display: none;
-        border-radius: 8px;
-    }
 </style>
 {% endblock %}
 
@@ -132,7 +123,7 @@
 
 <!-- 바코드 스캐너 섹션 -->
 <div class="scanner-section" id="scannerSection">
-  <div style="background: #fff3cd; padding: 15px; border-radius: 8px; margin-bottom: 15px; font-size: 14px; line-height: 1.6;">
+    <div style="background: #fff3cd; padding: 15px; border-radius: 8px; margin-bottom: 15px; font-size: 14px; line-height: 1.6;">
         <strong>📸 Photo Tips / 사진 촬영 팁:</strong>
         <ul style="margin: 10px 0; padding: 0 0 0 20px;">
             <li>Take photo in good lighting / 밝은 곳에서 촬영하세요</li>
@@ -285,17 +276,67 @@
         input.value = input.value.replace(/[^0-9-]/g, '');
     }
 
-    // 스캐너 토글
+    // 스캐너 토글 (결과 리셋 + 스크롤)
     function toggleScanner() {
         const scannerSection = document.getElementById('scannerSection');
+        const isOpening = !scannerSection.classList.contains('active');
+        
         scannerSection.classList.toggle('active');
         
-        if (!scannerSection.classList.contains('active')) {
+        if (isOpening) {
+            // 스캐너 열 때
+            hideResults();
+            hideError();
+            searchInput.value = '';
+            
+            const statusDiv = document.getElementById('scan-status');
+            statusDiv.style.display = 'none';
+            statusDiv.textContent = '';
+            
+            setTimeout(() => {
+                scannerSection.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'start' 
+                });
+            }, 100);
+        } else {
             stopCamera();
         }
     }
 
-    // 카메라 시작
+    // 카메라 중지 (Safari 호환성 개선)
+    function stopCamera() {
+        if (html5QrCodeScanner && isScanning) {
+            html5QrCodeScanner.stop()
+                .then(() => {
+                    isScanning = false;
+                    document.getElementById('startCameraBtn').disabled = false;
+                    document.getElementById('stopCameraBtn').disabled = true;
+                    document.getElementById('scan-status').style.display = 'none';
+                    console.log('Camera stopped');
+                    
+                    html5QrCodeScanner.clear()
+                        .then(() => {
+                            html5QrCodeScanner = null;
+                            console.log('Scanner cleared');
+                        })
+                        .catch(err => console.log('Clear error:', err));
+                })
+                .catch((err) => {
+                    console.error("Camera stop error:", err);
+                    isScanning = false;
+                    
+                    try {
+                        html5QrCodeScanner.clear().catch(() => {});
+                        html5QrCodeScanner = null;
+                    } catch(e) {
+                        console.log('Force clear error:', e);
+                    }
+                });
+        }
+    }
+
+    // 카메라 시작 (Safari 호환성 개선)
     function startCamera() {
         const readerDiv = document.getElementById('reader');
         const statusDiv = document.getElementById('scan-status');
@@ -305,6 +346,16 @@
         if (isScanning) {
             console.log('Already scanning');
             return;
+        }
+
+        if (html5QrCodeScanner) {
+            console.log('Cleaning up previous scanner instance');
+            try {
+                html5QrCodeScanner.clear().catch(() => {});
+            } catch(e) {
+                console.log('Cleanup error:', e);
+            }
+            html5QrCodeScanner = null;
         }
 
         const config = {
@@ -321,11 +372,6 @@
             ]
         };
 
-        // 새 인스턴스 생성
-        if (html5QrCodeScanner) {
-            html5QrCodeScanner.clear().catch(err => console.log('Clear error:', err));
-        }
-        
         html5QrCodeScanner = new Html5Qrcode("reader");
         
         html5QrCodeScanner.start(
@@ -341,27 +387,19 @@
             statusDiv.className = 'scan-status scanning';
             statusDiv.style.display = 'block';
             console.log('Camera started successfully');
+            
+            setTimeout(() => {
+                readerDiv.scrollIntoView({ 
+                    behavior: 'smooth', 
+                    block: 'center' 
+                });
+            }, 300);
         }).catch((err) => {
             console.error('Camera start error:', err);
-            showError(`Camera error: ${err}. Please check camera permissions.`);
+            showError(`Camera error: ${err}. Please check camera permissions or try refreshing the page.`);
             isScanning = false;
+            html5QrCodeScanner = null;
         });
-    }
-
-    // 카메라 중지
-    function stopCamera() {
-        if (html5QrCodeScanner && isScanning) {
-            html5QrCodeScanner.stop().then(() => {
-                isScanning = false;
-                document.getElementById('startCameraBtn').disabled = false;
-                document.getElementById('stopCameraBtn').disabled = true;
-                document.getElementById('scan-status').style.display = 'none';
-                console.log('Camera stopped');
-            }).catch((err) => {
-                console.error("Camera stop error:", err);
-                isScanning = false;
-            });
-        }
     }
 
     // 스캔 성공
@@ -369,15 +407,16 @@
         console.log(`Barcode detected: ${decodedText}`);
         
         const statusDiv = document.getElementById('scan-status');
-        statusDiv.textContent = `✅ Barcode detected: ${decodedText}`;
-        statusDiv.className = 'scan-status success';
+        searchInput.value = decodedText;
         
-        // 카메라 자동 중지
         stopCamera();
         
-        // 검색 실행
-        searchInput.value = decodedText;
-        searchProduct();
+        statusDiv.textContent = `✅ Barcode detected: ${decodedText} - Searching in 2 seconds...`;
+        statusDiv.className = 'scan-status success';
+        
+        setTimeout(() => {
+            searchProduct();
+        }, 2000);
     }
 
     function onScanFailure(error) {
@@ -389,137 +428,131 @@
         document.getElementById('file-input').click();
     }
 
-    // 이미지 파일에서 스캔 (수정됨)
-    // 이미지 파일에서 스캔 (개선된 버전)
-async function scanFromFile(event) {
-    const file = event.target.files[0];
-    if (!file) {
-        console.log('No file selected');
-        return;
-    }
+    // 이미지 파일에서 스캔
+    async function scanFromFile(event) {
+        const file = event.target.files[0];
+        if (!file) {
+            console.log('No file selected');
+            return;
+        }
 
-    console.log('File selected:', file.name, file.type, file.size);
+        console.log('File selected:', file.name, file.type, file.size);
 
-    // 카메라가 실행 중이면 중지
-    if (isScanning) {
-        stopCamera();
-    }
+        if (isScanning) {
+            stopCamera();
+        }
 
-    const statusDiv = document.getElementById('scan-status');
-    const readerDiv = document.getElementById('reader');
-    
-    statusDiv.textContent = '🔍 Scanning image with Html5-Qrcode...';
-    statusDiv.className = 'scan-status scanning';
-    statusDiv.style.display = 'block';
-
-    // 기존 스캐너 정리
-    if (html5QrCodeScanner) {
-        html5QrCodeScanner.clear().catch(err => console.log('Clear error:', err));
-    }
-
-    // 방법 1: Html5-Qrcode 시도
-    const html5QrCode = new Html5Qrcode("reader");
-    
-    try {
-        const decodedText = await html5QrCode.scanFile(file, true);
-        console.log('Html5-Qrcode success:', decodedText);
-        handleScanSuccess(decodedText);
-        html5QrCode.clear().catch(err => console.log('Clear error:', err));
-    } catch (err) {
-        console.log('Html5-Qrcode failed, trying Quagga2...', err);
+        const statusDiv = document.getElementById('scan-status');
         
-        // 방법 2: Quagga2로 재시도
-        statusDiv.textContent = '🔍 Trying alternative scanner (Quagga2)...';
+        statusDiv.textContent = '🔍 Scanning image with Html5-Qrcode...';
+        statusDiv.className = 'scan-status scanning';
+        statusDiv.style.display = 'block';
+
+        if (html5QrCodeScanner) {
+            html5QrCodeScanner.clear().catch(err => console.log('Clear error:', err));
+        }
+
+        const html5QrCode = new Html5Qrcode("reader");
         
         try {
-            const result = await scanWithQuagga(file);
-            console.log('Quagga2 success:', result);
-            handleScanSuccess(result);
-        } catch (quaggaErr) {
-            console.error('Both scanners failed:', quaggaErr);
-            handleScanFailure();
+            const decodedText = await html5QrCode.scanFile(file, true);
+            console.log('Html5-Qrcode success:', decodedText);
+            handleScanSuccess(decodedText);
+            html5QrCode.clear().catch(err => console.log('Clear error:', err));
+        } catch (err) {
+            console.log('Html5-Qrcode failed, trying Quagga2...', err);
+            
+            statusDiv.textContent = '🔍 Trying alternative scanner (Quagga2)...';
+            
+            try {
+                const result = await scanWithQuagga(file);
+                console.log('Quagga2 success:', result);
+                handleScanSuccess(result);
+            } catch (quaggaErr) {
+                console.error('Both scanners failed:', quaggaErr);
+                handleScanFailure();
+            }
+            
+            html5QrCode.clear().catch(err => console.log('Clear error:', err));
         }
         
-        html5QrCode.clear().catch(err => console.log('Clear error:', err));
+        event.target.value = '';
     }
-    
-    // 파일 입력 초기화
-    event.target.value = '';
-}
 
-// Quagga2를 사용한 바코드 스캔
-function scanWithQuagga(file) {
-    return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        
-        reader.onload = function(e) {
-            const img = new Image();
-            img.onload = function() {
-                Quagga.decodeSingle({
-                    src: e.target.result,
-                    numOfWorkers: 0,
-                    inputStream: {
-                        size: 800
-                    },
-                    decoder: {
-                        readers: [
-                            "ean_reader",
-                            "ean_8_reader",
-                            "code_128_reader",
-                            "code_39_reader",
-                            "upc_reader",
-                            "upc_e_reader"
-                        ]
-                    },
-                }, function(result) {
-                    if (result && result.codeResult) {
-                        resolve(result.codeResult.code);
-                    } else {
-                        reject(new Error('No barcode found'));
-                    }
-                });
+    // Quagga2를 사용한 바코드 스캔
+    function scanWithQuagga(file) {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    Quagga.decodeSingle({
+                        src: e.target.result,
+                        numOfWorkers: 0,
+                        inputStream: {
+                            size: 1200
+                        },
+                        decoder: {
+                            readers: [
+                                "ean_reader",
+                                "ean_8_reader",
+                                "code_128_reader",
+                                "code_39_reader",
+                                "upc_reader",
+                                "upc_e_reader"
+                            ]
+                        },
+                        locate: true
+                    }, function(result) {
+                        if (result && result.codeResult) {
+                            resolve(result.codeResult.code);
+                        } else {
+                            reject(new Error('No barcode found'));
+                        }
+                    });
+                };
+                img.onerror = function() {
+                    reject(new Error('Image load failed'));
+                };
+                img.src = e.target.result;
             };
-            img.onerror = function() {
-                reject(new Error('Image load failed'));
+            
+            reader.onerror = function() {
+                reject(new Error('File read failed'));
             };
-            img.src = e.target.result;
-        };
+            
+            reader.readAsDataURL(file);
+        });
+    }
+
+    // 스캔 성공 처리
+    function handleScanSuccess(decodedText) {
+        const statusDiv = document.getElementById('scan-status');
+        statusDiv.textContent = `✅ Barcode found: ${decodedText} - Searching in 2 seconds...`;
+        statusDiv.className = 'scan-status success';
+        searchInput.value = decodedText;
         
-        reader.onerror = function() {
-            reject(new Error('File read failed'));
-        };
+        setTimeout(() => {
+            searchProduct();
+        }, 2000);
+    }
+
+    // 스캔 실패 처리
+    function handleScanFailure() {
+        const statusDiv = document.getElementById('scan-status');
+        statusDiv.textContent = '❌ No barcode found in image';
+        statusDiv.className = 'scan-status error';
         
-        reader.readAsDataURL(file);
-    });
-}
+        showError(
+            `No barcode found in image. Please try:\n` +
+            `• Taking a clearer, closer photo of the barcode\n` +
+            `• Using the camera scanner instead\n` +
+            `• Entering the barcode number manually (13 digits)`
+        );
+    }
 
-// 스캔 성공 처리
-function handleScanSuccess(decodedText) {
-    const statusDiv = document.getElementById('scan-status');
-    statusDiv.textContent = `✅ Barcode found: ${decodedText}`;
-    statusDiv.className = 'scan-status success';
-    searchInput.value = decodedText;
-    
-    setTimeout(() => {
-        searchProduct();
-    }, 1000);
-}
-
-// 스캔 실패 처리
-function handleScanFailure() {
-    const statusDiv = document.getElementById('scan-status');
-    statusDiv.textContent = '❌ No barcode found in image';
-    statusDiv.className = 'scan-status error';
-    
-    showError(
-        `No barcode found in image. Please try:\n` +
-        `• Taking a clearer, closer photo of the barcode\n` +
-        `• Using the camera scanner instead\n` +
-        `• Entering the barcode number manually (13 digits)`
-    );
-}
-
-
+    // 검색 함수
     async function searchProduct() {
         let searchValue = searchInput.value.trim();
         
@@ -642,10 +675,20 @@ function handleScanFailure() {
     function showResults() { results.classList.remove('hidden'); }
     function hideResults() { results.classList.add('hidden'); }
 
-    // 페이지 언로드 시 카메라 중지
+    // 페이지 언로드/백그라운드 전환 시 카메라 정리
     window.addEventListener('beforeunload', function() {
+        stopCamera();
+    });
+
+    document.addEventListener('visibilitychange', function() {
+        if (document.hidden && isScanning) {
+            console.log('Page hidden, stopping camera');
+            stopCamera();
+        }
+    });
+
+    window.addEventListener('pagehide', function() {
         stopCamera();
     });
 </script>
 {% endblock %}
-

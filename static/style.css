@@ -789,3 +789,15 @@ footer p {
     color: rgba(255, 255, 255, 0.7) !important;
     margin: 0 !important;
 }
+.scanner-section {
+    background: #f8f9fa;
+    padding: 20px;
+    border-radius: 12px;
+    margin: 20px 0;
+    display: none;
+    scroll-margin-top: 20px; /* 스크롤 시 상단 여백 */
+}
+
+.scanner-section.active {
+    display: block;
+}
