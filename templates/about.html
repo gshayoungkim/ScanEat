@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About Us - Ingredient Checker</title>
+    <title>About Us - ScanEat</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
@@ -11,9 +12,11 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 20px;
+            display: flex;
+            flex-direction: column;
         }
         
-        /* 네비게이션 */
+        /* ★ 네비게이션 - Privacy, Terms 제거 ★ */
         .navbar {
             background: rgba(255,255,255,0.1);
             padding: 12px 0;
@@ -53,6 +56,7 @@
             border-radius: 12px;
             box-shadow: 0 8px 32px rgba(0,0,0,0.2);
             padding: 40px;
+            flex: 1;
         }
         
         h1 { font-size: 32px; margin-bottom: 24px; color: #333; }
@@ -96,7 +100,7 @@
             line-height: 1.6;
         }
 
-        /* ★ API 출처 스타일 추가 ★ */
+        /* API 출처 스타일 */
         .data-sources {
             background: #f0f4ff;
             border-left: 4px solid #667eea;
@@ -131,30 +135,64 @@
             font-size: 12px;
             margin-left: 8px;
         }
+
+        /* ★ 푸터 스타일 ★ */
+        footer {
+            background: transparent !important;
+            color: white !important;
+            padding: 30px 20px !important;
+            text-align: center !important;
+            margin-top: 40px !important;
+            border-top: 2px solid rgba(255, 255, 255, 0.4) !important;
+        }
+
+        footer p {
+            margin: 0 auto 12px auto !important;
+            font-size: 0.9rem !important;
+            color: white !important;
+        }
+
+        .footer-links {
+            display: flex !important;
+            justify-content: center !important;
+            align-items: center !important;
+            gap: 12px !important;
+        }
+
+        .footer-links a {
+            color: white !important;
+            text-decoration: none !important;
+            font-size: 0.9rem !important;
+            transition: all 0.3s !important;
+        }
+
+        .footer-links a:hover {
+            color: #ffffff !important;
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.8) !important;
+            text-decoration: underline !important;
+        }
+
+        .footer-divider {
+            color: rgba(255, 255, 255, 0.7) !important;
+        }
     </style>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9118651721155215"
      crossorigin="anonymous"></script>
 </head>
 <body>
-    <!-- 네비게이션 -->
+    <!-- ★ 네비게이션: Home, About, Contact만 ★ -->
     <div class="navbar">
         <div class="navbar-container">
             <a href="/">🏠 Home</a>
             <span class="navbar-separator">|</span>
             <a href="/about">ℹ️ About</a>
             <span class="navbar-separator">|</span>
-            <a href="/privacy">🔒 Privacy</a>
-            <span class="navbar-separator">|</span>
-            <a href="/terms">📋 Terms</a>
-            <span class="navbar-separator">|</span>
             <a href="/contact">📧 Contact</a>
         </div>
     </div>
 
-
     <div class="container">
         <a href="/" class="back-link">← Back to Home</a>
-
 
         <!-- 탭 버튼 -->
         <div style="display: flex; gap: 12px; margin-bottom: 24px; border-bottom: 2px solid #e0e0e0;">
@@ -162,16 +200,15 @@
             <button style="padding: 12px 24px; background: transparent; color: #333; border: none; cursor: pointer; font-size: 16px;" onclick="switchLanguage('ko', event)">한국어</button>
         </div>
 
-
         <!-- 영어 콘텐츠 -->
         <div id="en" style="display: block;">
             <h1>About Us</h1>
-
 
             <div class="section">
                 <h2><span class="emoji">📖</span>Our Story</h2>
                 <p>This project was born from observing international friends repeatedly struggle with the same inconvenience: flipping over food packaging at convenience stores and supermarkets to check ingredient labels. Whether due to religious beliefs, food allergies, or lifestyle choices, they needed a faster, easier way to identify safe foods while visiting Korea.</p>
             </div>
+
             <div class="section">
                 <h2><span class="emoji">🔍</span>Searchable Allergens</h2>
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px;">
@@ -199,7 +236,6 @@
                 </div>
             </div>
 
-
             <div class="section">
                 <h2><span class="emoji">🎯</span>What We Do</h2>
                 <p>We provide an easy-to-use ingredient detection service for international tourists and residents in Korea. Simply enter a product's report number or barcode, and our service instantly analyzes the ingredients to identify potential allergens or forbidden ingredients.</p>
@@ -211,7 +247,6 @@
                 </ul>
             </div>
 
-
             <div class="section">
                 <h2><span class="emoji">❤️</span>Why It Matters</h2>
                 <p>International visitors to Korea have diverse dietary requirements for various reasons:</p>
@@ -221,7 +256,6 @@
                     <li><strong>Lifestyle Choices</strong> - Vegans (no animal products), vegetarians, and those with ethical dietary preferences</li>
                 </ul>
             </div>
-
 
             <div class="section">
                 <h2><span class="emoji">📋</span>How It Works</h2>
@@ -234,13 +268,12 @@
                 </ol>
             </div>
 
-
             <div class="section">
                 <h2><span class="emoji">🚀</span>Our Mission</h2>
                 <p>To empower international visitors to Korea with the information they need to make safe, confident food choices—removing barriers and making Korean food experiences more enjoyable and stress-free for everyone.</p>
             </div>
 
-                       <!-- ★ API 출처 섹션 추가 (영어) ★ -->
+            <!-- API 출처 섹션 (영어) -->
             <div class="data-sources">
                 <h2><span class="emoji">📊</span>Data Sources</h2>
                 <div class="source-item">
@@ -260,15 +293,13 @@
                 </div>
                 <div class="source-item">
                     <strong>Custom Database:</strong> 
-                    <a href="/contact" style="color: #667eea; text-decoration: none; font-weight: 500;">Products not listed in official databases are stored in our custom database.</a>
+                    <a href="/contact">Products not listed in official databases are stored in our custom database.</a>
                     <span class="license-badge">Admin Managed</span>
                 </div>
                 <p style="font-size: 12px; color: #666; margin-top: 12px; margin-bottom: 0;">
                     This work utilizes public data provided by the Korean Ministry of Food and Drug Safety under Creative Commons Attribution 1.0 License.
                 </p>
             </div>
-
-
 
             <div class="section">
                 <h2><span class="emoji">❓</span>Frequently Asked Questions</h2>
@@ -278,24 +309,20 @@
                     <div class="faq-answer">A: Our data is based on the official Korea Food and Drug Administration (KFDA) database, ensuring reliability. However, manufacturers may change ingredients, so we recommend checking recent updates when available.</div>
                 </div>
 
-
                 <div class="faq-item">
                     <div class="faq-question">Q: Does every Korean product show up in your database?</div>
                     <div class="faq-answer">A: We cover registered processed foods in the MFDS database, with continuous expansion. Most commonly purchased items are included.</div>
                 </div>
-
 
                 <div class="faq-item">
                     <div class="faq-question">Q: Can I use this service on my phone?</div>
                     <div class="faq-answer">A: Yes! Our service is fully mobile-optimized. You can easily look up products while shopping.</div>
                 </div>
 
-
                 <div class="faq-item">
                     <div class="faq-question">Q: Is it free to use?</div>
                     <div class="faq-answer">A: Yes, our ingredient detector is completely free for everyone.</div>
                 </div>
-
 
                 <div class="faq-item">
                     <div class="faq-question">Q: What if a product is not found?</div>
@@ -304,16 +331,15 @@
             </div>
         </div>
 
-
         <!-- 한국어 콘텐츠 -->
         <div id="ko" style="display: none;">
             <h1>저희 소개</h1>
-
 
             <div class="section">
                 <h2><span class="emoji">📖</span>우리의 시작</h2>
                 <p>매번 편의점이나 마트에서 포장지를 뒤집어 원재료명을 확인해야 했던 외국인 친구들의 불편함에서 이 프로젝트가 시작되었습니다. 특히 종교적 이유나 알러지, 비건 라이프스타일 때문에 특정 식재료를 피해야 하는 분들이 한국에 방문했을 때 매번 같은 수고를 반복하는 모습을 보았습니다.</p>
             </div>
+
             <div class="section">
                 <h2><span class="emoji">🔍</span>검색 가능한 알레르기 항목</h2>
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px;">
@@ -341,8 +367,6 @@
                 </div>
             </div>
 
-
-
             <div class="section">
                 <h2><span class="emoji">🎯</span>우리의 서비스</h2>
                 <p>한국을 방문한 외국인 관광객과 거주자를 위한 원재료 검출 서비스를 제공합니다. 상품의 품목보고번호 또는 바코드를 입력하면, 우리의 서비스가 자동으로 원재료를 분석하여 잠재적인 알러지 유발물질이나 금기 성분을 찾아냅니다.</p>
@@ -354,7 +378,6 @@
                 </ul>
             </div>
 
-
             <div class="section">
                 <h2><span class="emoji">❤️</span>중요성</h2>
                 <p>한국을 방문하는 외국인들은 다양한 이유로 특정 식재료를 피해야 합니다:</p>
@@ -364,7 +387,6 @@
                     <li><strong>라이프스타일</strong> - 비건(모든 동물성 식품 제외), 채식주의자 등</li>
                 </ul>
             </div>
-
 
             <div class="section">
                 <h2><span class="emoji">📋</span>사용 방법</h2>
@@ -377,13 +399,12 @@
                 </ol>
             </div>
 
-
             <div class="section">
                 <h2><span class="emoji">🚀</span>우리의 목표</h2>
                 <p>한국을 방문한 외국인들이 안전하고 자신감 있게 음식을 선택할 수 있도록 필요한 정보를 제공하여, 장벽을 제거하고 모두가 즐거운 한국 음식 경험을 할 수 있도록 돕는 것입니다.</p>
             </div>
 
-            <!-- ★ API 출처 섹션 추가 (한국어) ★ -->
+            <!-- API 출처 섹션 (한국어) -->
             <div class="data-sources">
                 <h2><span class="emoji">📊</span>데이터 출처</h2>
                 <div class="source-item">
@@ -396,24 +417,20 @@
                     <a href="https://foodqr.kr" target="_blank">FoodQR 서비스</a>
                     <span class="license-badge">CC BY 1.0</span>
                 </div>
-                  <div class="source-item">
+                <div class="source-item">
                     <strong>바코드 제품 정보:</strong> 
                     <a href="http://www.foodsafetykorea.go.kr/api/openApiInfo.do?menu_grp=MENU_GRP31&menu_no=661&show_cnt=10&start_idx=1&svc_no=C005" target="_blank">식품안전나라 API (C005)</a>
                     <span class="license-badge">CC BY 1.0</span>
                 </div>
                 <div class="source-item">
                     <strong>자체 데이터베이스:</strong> 
-                    <a href="/contact" style="color: #667eea; text-decoration: none; font-weight: 500;">정부 공식 데이터베이스에 없는 제품은 자체 데이터베이스에 저장합니다.</a>
+                    <a href="/contact">정부 공식 데이터베이스에 없는 제품은 자체 데이터베이스에 저장합니다.</a>
                     <span class="license-badge">관리자 관리</span>
                 </div>
-
-
-
                 <p style="font-size: 12px; color: #666; margin-top: 12px; margin-bottom: 0;">
                     본 저작물은 식품의약품안전처에서 제공하는 공공데이터를 크리에이티브 커먼즈 저작자표시 1.0 라이선스로 이용하였습니다.
                 </p>
             </div>
-
 
             <div class="section">
                 <h2><span class="emoji">❓</span>자주 묻는 질문</h2>
@@ -423,24 +440,20 @@
                     <div class="faq-answer">A: 우리의 데이터는 공식 식품의약품안전처(MFDS) 데이터베이스를 기반으로 제공되므로 신뢰할 수 있습니다. 다만 제조사에서 원재료를 변경할 수 있으므로, 최신 정보 확인을 권장합니다.</div>
                 </div>
 
-
                 <div class="faq-item">
                     <div class="faq-question">Q: 모든 한국 식품이 검색되나요?</div>
                     <div class="faq-answer">A: 우리는 식품의약품안전처에 등록된 가공식품을 다루고 있으며, 지속적으로 확대 중입니다. 대부분의 일반적으로 구매하는 제품이 포함되어 있습니다.</div>
                 </div>
-
 
                 <div class="faq-item">
                     <div class="faq-question">Q: 휴대폰에서도 사용할 수 있나요?</div>
                     <div class="faq-answer">A: 네! 우리의 서비스는 모바일에 최적화되어 있습니다. 쇼핑 중에도 쉽게 상품을 검색할 수 있습니다.</div>
                 </div>
 
-
                 <div class="faq-item">
                     <div class="faq-question">Q: 정말 무료로 사용할 수 있나요?</div>
                     <div class="faq-answer">A: 네, 원재료 검출 서비스는 누구나 완전히 무료로 사용할 수 있습니다.</div>
                 </div>
-
 
                 <div class="faq-item">
                     <div class="faq-question">Q: 검색되지 않는 상품이 있으면 어떻게 하나요?</div>
@@ -450,6 +463,15 @@
         </div>
     </div>
 
+    <!-- ★ 푸터 추가 ★ -->
+    <footer>
+        <p>&copy; 2025 ScanEat. All rights reserved.</p>
+        <div class="footer-links">
+            <a href="/privacy">Privacy</a>
+            <span class="footer-divider">|</span>
+            <a href="/terms">Terms</a>
+        </div>
+    </footer>
 
     <script>
         function switchLanguage(lang, event) {

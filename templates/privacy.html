@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Privacy Policy - Ingredient Checker</title>
+    <title>Privacy Policy - ScanEat</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { 
@@ -11,7 +12,11 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             padding: 20px;
+            display: flex;
+            flex-direction: column;
         }
+        
+        /* ★ 네비게이션 - Privacy, Terms 제거 ★ */
         .navbar {
             background: rgba(255,255,255,0.1);
             padding: 12px 0;
@@ -38,6 +43,7 @@
         }
         .navbar a:hover { background: rgba(255,255,255,0.2); }
         .navbar-separator { color: rgba(255,255,255,0.3); }
+        
         .container {
             max-width: 900px;
             margin: 0 auto;
@@ -45,6 +51,7 @@
             border-radius: 12px;
             box-shadow: 0 8px 32px rgba(0,0,0,0.2);
             padding: 40px;
+            flex: 1;
         }
         h1 { font-size: 32px; margin-bottom: 8px; color: #333; }
         .last-updated { color: #999; font-size: 12px; margin-bottom: 24px; }
@@ -62,20 +69,57 @@
             border-radius: 4px;
         }
         .back-link:hover { background: #764ba2; }
+
+        /* ★ 푸터 스타일 ★ */
+        footer {
+            background: transparent !important;
+            color: white !important;
+            padding: 30px 20px !important;
+            text-align: center !important;
+            margin-top: 40px !important;
+            border-top: 2px solid rgba(255, 255, 255, 0.4) !important;
+        }
+
+        footer p {
+            margin: 0 auto 12px auto !important;
+            font-size: 0.9rem !important;
+            color: white !important;
+        }
+
+        .footer-links {
+            display: flex !important;
+            justify-content: center !important;
+            align-items: center !important;
+            gap: 12px !important;
+        }
+
+        .footer-links a {
+            color: white !important;
+            text-decoration: none !important;
+            font-size: 0.9rem !important;
+            transition: all 0.3s !important;
+        }
+
+        .footer-links a:hover {
+            color: #ffffff !important;
+            text-shadow: 0 0 8px rgba(255, 255, 255, 0.8) !important;
+            text-decoration: underline !important;
+        }
+
+        .footer-divider {
+            color: rgba(255, 255, 255, 0.7) !important;
+        }
     </style>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9118651721155215"
      crossorigin="anonymous"></script>
 </head>
 <body>
+    <!-- ★ 네비게이션: Home, About, Contact만 ★ -->
     <div class="navbar">
         <div class="navbar-container">
             <a href="/">🏠 Home</a>
             <span class="navbar-separator">|</span>
             <a href="/about">ℹ️ About</a>
-            <span class="navbar-separator">|</span>
-            <a href="/privacy">🔒 Privacy</a>
-            <span class="navbar-separator">|</span>
-            <a href="/terms">📋 Terms</a>
             <span class="navbar-separator">|</span>
             <a href="/contact">📧 Contact</a>
         </div>
@@ -92,7 +136,7 @@
         <div id="en" style="display: block;">
             <h1>Privacy Policy</h1>
             <p class="last-updated">Last Updated: November 2025</p>
-            <p>This Privacy Policy explains how Ingredient Checker collects, uses, and protects your information.</p>
+            <p>This Privacy Policy explains how ScanEat collects, uses, and protects your information.</p>
             
             <h2>1. Information We Collect</h2>
             <p>Our service does NOT collect personal information. We only collect:</p>
@@ -112,7 +156,7 @@
         <div id="ko" style="display: none;">
             <h1>개인정보처리방침</h1>
             <p class="last-updated">최종 수정일: 2025년 11월</p>
-            <p>이 개인정보처리방침은 원재료 검출 서비스가 정보를 수집, 사용, 보호하는 방법을 설명합니다.</p>
+            <p>이 개인정보처리방침은 ScanEat이 정보를 수집, 사용, 보호하는 방법을 설명합니다.</p>
             
             <h2>1. 수집하는 정보</h2>
             <p>우리 서비스는 개인정보를 수집하지 않습니다:</p>
@@ -129,6 +173,16 @@
             <p>문의: <strong>contact.scaneat@gmail.com</strong></p>
         </div>
     </div>
+
+    <!-- ★ 푸터 추가 ★ -->
+    <footer>
+        <p>&copy; 2025 ScanEat. All rights reserved.</p>
+        <div class="footer-links">
+            <a href="/privacy">Privacy</a>
+            <span class="footer-divider">|</span>
+            <a href="/terms">Terms</a>
+        </div>
+    </footer>
 
     <script>
         function switchLanguage(lang, event) {

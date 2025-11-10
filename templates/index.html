@@ -1,91 +1,29 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ScanEat - Korea</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://scaneat.co.kr">
-    <meta property="og:title" content="ScanEat - Korea">
-    <meta property="og:description" content="Check ingredients in Korean food products. 한국 가공 식품의 원재료를 쉽게 확인하세요.">
-    <meta property="og:image" content="https://scaneat.co.kr/static/logo.png">
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
-    <meta property="og:site_name" content="ScanEat">
-    <meta property="og:locale" content="en_US">
-    <style>
-        /* 네비게이션 스타일 */
-        .navbar {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            padding: 12px 0;
-            margin-bottom: 24px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-        .navbar-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 16px;
-            display: flex;
-            gap: 16px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-        .navbar a {
-            color: white;
-            text-decoration: none;
-            font-size: 14px;
-            padding: 8px 12px;
-            border-radius: 4px;
-            transition: all 0.3s;
-            white-space: nowrap;
-        }
-        .navbar a:hover {
-            background: rgba(255,255,255,0.2);
-        }
-        .navbar-separator {
-            color: rgba(255,255,255,0.3);
-        }
-    </style>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9118651721155215"
-     crossorigin="anonymous"></script>
-     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9118651721155215"
-     crossorigin="anonymous"></script>
-</head>
-<body>
-    <!-- 네비게이션 추가 -->
-    <div class="navbar">
-        <div class="navbar-container">
-            <a href="/">🏠 Home</a>
-            <span class="navbar-separator">|</span>
-            <a href="/about">ℹ️ About</a>
-            <span class="navbar-separator">|</span>
-            <a href="/privacy">🔒 Privacy</a>
-            <span class="navbar-separator">|</span>
-            <a href="/terms">📋 Terms</a>
-            <span class="navbar-separator">|</span>
-            <a href="/contact">📧 Contact</a>
-        </div>
-    </div>
+{% extends "base.html" %}
 
-    <div class="container">
-        <header>
-                 <div class="header-content">
+{% block title %}ScanEat - Check Korean Food Ingredients{% endblock %}
+
+{% block head_extra %}
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9118651721155215"
+ crossorigin="anonymous"></script>
+{% endblock %}
+
+{% block content %}
+<header>
+    <div class="header-content">
         <img src="{{ url_for('static', filename='logo.png') }}" alt="ScanEat Logo" class="logo">
         <div class="header-text">
             <h1>ScanEat</h1>
             <p>Check ingredients in Korean food products</p>
         </div>
     </div>
-            </div>
-        </header>
+</header>
 
-        <div class="input-guide-section">
-            <p>'품목보고번호' 또는 '바코드번호'를 넣어주세요</p>
-            <p>Please input '품목보고번호(Product Report Number)' or 'Barcode Number'</p>
-        </div>
+<div class="input-guide-section">
+    <p>'품목보고번호' 또는 '바코드번호'를 넣어주세요</p>
+    <p>Please input '품목보고번호(Product Report Number)' or 'Barcode Number'</p>
+</div>
 
-        <div class="search-section">
+<div class="search-section">
     <label class="search-label">
         🔍 Product Number or Barcode(Product Number first)
     </label>
@@ -108,224 +46,213 @@
     </div>
 </div>
 
-
-
-        <!-- 가이드 팝업 모달 -->
-        <div id="guideModal" class="modal hidden">
-            <div class="modal-overlay" onclick="closeGuideModal()"></div>
-            <div class="modal-content guide-content">
-                <button class="modal-close" onclick="closeGuideModal()">×</button>
-                <h2>📍 How to Find Product Number or Barcode</h2>
-                
-                <div class="guide-section">
-                    <h3>🔹 Product Report Number (품목보고번호)</h3>
-                    <p>Location: Usually on the back or side of the package</p>
-                    <img src="/static/guide-imrpt.png" alt="Product Report Number Location" style="max-width: 100%; margin: 15px 0; border-radius: 10px;">
-                </div>
-                
-                <div class="guide-section">
-                    <h3>🔹 Barcode Number (바코드번호)</h3>
-                    <p>Location: Usually at the bottom of the package</p>
-                    <img src="/static/guide-barcode.png" alt="Barcode Location" style="max-width: 100%; margin: 15px 0; border-radius: 10px;">
-                </div>
-                
-                <div class="guide-tips">
-                    <p><strong>💡 Tips:</strong></p>
-                    <ul>
-                        <li>Product Report Number: 12-15 digits, usually starts with date</li>
-                        <li>Barcode: 13 digits, shows as bars + numbers</li>
-                        <li>You only need ONE of them to search</li>
-                    </ul>
-                </div>
-            </div>
+<!-- 가이드 팝업 모달 -->
+<div id="guideModal" class="modal hidden">
+    <div class="modal-overlay" onclick="closeGuideModal()"></div>
+    <div class="modal-content guide-content">
+        <button class="modal-close" onclick="closeGuideModal()">×</button>
+        <h2>📍 How to Find Product Number or Barcode</h2>
+        
+        <div class="guide-section">
+            <h3>🔹 Product Report Number (품목보고번호)</h3>
+            <p>Location: Usually on the back or side of the package</p>
+            <img src="/static/guide-imrpt.png" alt="Product Report Number Location" style="max-width: 100%; margin: 15px 0; border-radius: 10px;">
         </div>
-
-        <div id="loading" class="loading hidden">
-            <div class="spinner"></div>
-            <p>Searching...</p>
+        
+        <div class="guide-section">
+            <h3>🔹 Barcode Number (바코드번호)</h3>
+            <p>Location: Usually at the bottom of the package</p>
+            <img src="/static/guide-barcode.png" alt="Barcode Location" style="max-width: 100%; margin: 15px 0; border-radius: 10px;">
         </div>
-
-        <div id="errorMessage" class="error-message hidden"></div>
-
-        <div id="results" class="results hidden">
-            <div class="product-info">
-                <h2>Product Information</h2>
-                <p class="product-name" id="productName"></p>
-                <p class="product-source" id="productSource"></p>
-            </div>
-            <div class="ingredients-section">
-                <h3>⚠️ Detected Ingredients</h3>
-                <div id="ingredientsList" class="ingredients-list"></div>
-                <p id="noIngredientsMessage" class="no-ingredients hidden">
-                    ✅ None of the common allergens or restricted ingredients were detected.
-                </p>
-            </div>
-            <div class="raw-materials">
-                <h3>📋 Full Ingredient List (Korean)</h3>
-                <p id="rawMaterials" class="raw-materials-text"></p>
-            </div>
-        </div>
-
-        <div class="disclaimer-section">
-            <h3>⚠️ Important Notice</h3>
-            <div class="disclaimer-item">
-                <h4>🔍 For Reference Only</h4>
-                <p><strong>참고용이므로 실제 제품 포장지와 비교해보세요.</strong><br>For reference only. Please compare with the actual product packaging.</p>
-            </div>
-            <div class="disclaimer-item">
-                <h4>⚡ Limited Ingredient Detection</h4>
-                <p><strong>외국인·비건·종교·알러지 등 주의가 필요한 원재료만 표시합니다.</strong><br>Only ingredients requiring caution for foreigners, vegans, religious restrictions, and allergies are listed.</p>
-            </div>
-            <div class="disclaimer-item">
-                <h4>📊 Database Limitations</h4>
-                <p>
-                    <strong>데이터베이스에 저장되어 있지 않은 항목은 나오지 않을 수도 있습니다. 천천히 추가중입니다.</strong><br>
-                    Some items may not appear if they are not stored in the database. We are constantly adding more products.
-                </p>
-            </div>
+        
+        <div class="guide-tips">
+            <p><strong>💡 Tips:</strong></p>
+            <ul>
+                <li>Product Report Number: 12-15 digits, usually starts with date</li>
+                <li>Barcode: 13 digits, shows as bars + numbers</li>
+                <li>You only need ONE of them to search</li>
+            </ul>
         </div>
     </div>
+</div>
 
-    <script>
-        const searchInput = document.getElementById('searchInput');
-        const loading = document.getElementById('loading');
-        const errorMessage = document.getElementById('errorMessage');
-        const results = document.getElementById('results');
+<div id="loading" class="loading hidden">
+    <div class="spinner"></div>
+    <p>Searching...</p>
+</div>
 
-        searchInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') searchProduct();
-        });
+<div id="errorMessage" class="error-message hidden"></div>
 
-        // 숫자와 하이픈만 허용하고, 자동으로 제거
-function validateNumberAndDash(input) {
-    // 입력 시 숫자와 하이픈만 표시
-    input.value = input.value.replace(/[^0-9-]/g, '');
-}
+<div id="results" class="results hidden">
+    <div class="product-info">
+        <h2>Product Information</h2>
+        <p class="product-name" id="productName"></p>
+        <p class="product-source" id="productSource"></p>
+    </div>
+    <div class="ingredients-section">
+        <h3>⚠️ Detected Ingredients</h3>
+        <div id="ingredientsList" class="ingredients-list"></div>
+        <p id="noIngredientsMessage" class="no-ingredients hidden">
+            ✅ None of the common allergens or restricted ingredients were detected.
+        </p>
+    </div>
+    <div class="raw-materials">
+        <h3>📋 Full Ingredient List (Korean)</h3>
+        <p id="rawMaterials" class="raw-materials-text"></p>
+    </div>
+</div>
 
-async function searchProduct() {
-    let searchValue = searchInput.value.trim();
-    
-    if (!searchValue) {
-        showError('Please enter a product number or barcode\n품목보고번호 또는 바코드번호를 입력해주세요');
-        return;
+<div class="disclaimer-section">
+    <h3>⚠️ Important Notice</h3>
+    <div class="disclaimer-item">
+        <h4>🔍 For Reference Only</h4>
+        <p><strong>참고용이므로 실제 제품 포장지와 비교해보세요.</strong><br>For reference only. Please compare with the actual product packaging.</p>
+    </div>
+    <div class="disclaimer-item">
+        <h4>⚡ Limited Ingredient Detection</h4>
+        <p><strong>외국인·비건·종교·알러지 등 주의가 필요한 원재료만 표시합니다.</strong><br>Only ingredients requiring caution for foreigners, vegans, religious restrictions, and allergies are listed.</p>
+    </div>
+    <div class="disclaimer-item">
+        <h4>📊 Database Limitations</h4>
+        <p>
+            <strong>데이터베이스에 저장되어 있지 않은 항목은 나오지 않을 수도 있습니다. 천천히 추가중입니다.</strong><br>
+            Some items may not appear if they are not stored in the database. We are constantly adding more products.
+        </p>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const searchInput = document.getElementById('searchInput');
+    const loading = document.getElementById('loading');
+    const errorMessage = document.getElementById('errorMessage');
+    const results = document.getElementById('results');
+
+    searchInput.addEventListener('keypress', function(e) {
+        if (e.key === 'Enter') searchProduct();
+    });
+
+    function validateNumberAndDash(input) {
+        input.value = input.value.replace(/[^0-9-]/g, '');
     }
-    
-    searchValue = searchValue.replace(/-/g, '');
-    
-    if (!searchValue || !/^\d+$/.test(searchValue)) {
-        showError('⚠️ Please enter numbers only\n숫자만 입력해주세요');
-        return;
-    }
-    
-    hideError();
-    hideResults();
-    showLoading();
 
-    try {
-        const response = await fetch('/search', {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify({ searchValue })
-        });
-        const data = await response.json();
+    async function searchProduct() {
+        let searchValue = searchInput.value.trim();
         
-        // ★ 에러 메시지 (이미 /contact로 연결됨) ★
-        if (data.error) {
-        showError(
-            `⚠️ Product not found in any database. 공공 데이터 및 자체 데이터에서 찾을 수 없습니다.<br>` +
-            `Please request the product <a href="/contact">here</a>. 상품명을 <a href="/contact">상품 요청</a>에 남겨주세요.`
-        );
-
+        if (!searchValue) {
+            showError('Please enter a product number or barcode\n품목보고번호 또는 바코드번호를 입력해주세요');
             return;
         }
         
-        if (!response.ok) {
-            throw new Error(data.error || 'Search failed');
+        searchValue = searchValue.replace(/-/g, '');
+        
+        if (!searchValue || !/^\d+$/.test(searchValue)) {
+            showError('⚠️ Please enter numbers only\n숫자만 입력해주세요');
+            return;
         }
         
-        displayResults(data);
-    } catch (error) {
-        showError(`❌ ${error.message}`);
-    } finally {
-        hideLoading();
+        hideError();
+        hideResults();
+        showLoading();
+
+        try {
+            const response = await fetch('/search', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ searchValue })
+            });
+            const data = await response.json();
+            
+            if (data.error) {
+                showError(
+                    `⚠️ Product not found in any database. 공공 데이터 및 자체 데이터에서 찾을 수 없습니다.<br>` +
+                    `Please request the product <a href="/contact">here</a>. 상품명을 <a href="/contact">상품 요청</a>에 남겨주세요.`
+                );
+                return;
+            }
+            
+            if (!response.ok) {
+                throw new Error(data.error || 'Search failed');
+            }
+            
+            displayResults(data);
+        } catch (error) {
+            showError(`❌ ${error.message}`);
+        } finally {
+            hideLoading();
+        }
     }
-}
 
+    function openGuideModal() {
+        document.getElementById('guideModal').classList.remove('hidden');
+    }
 
+    function closeGuideModal() {
+        document.getElementById('guideModal').classList.add('hidden');
+    }
 
-
-        function openGuideModal() {
-            document.getElementById('guideModal').classList.remove('hidden');
-        }
-
-        function closeGuideModal() {
-            document.getElementById('guideModal').classList.add('hidden');
-        }
-
-        // 모달 외부 클릭 시 닫기
-        document.addEventListener('DOMContentLoaded', function() {
-            const modal = document.getElementById('guideModal');
-            if (modal) {
-                modal.addEventListener('click', function(e) {
-                    if (e.target === modal || e.target.classList.contains('modal-overlay')) {
-                        closeGuideModal();
-                    }
-                });
-            }
-        });
-
-        // ESC 키로 닫기
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') {
-                closeGuideModal();
-            }
-        });
-
-        function displayResults(data) {
-            document.getElementById('productName').textContent = data.productName;
-            const sourceElement = document.getElementById('productSource');
-            sourceElement.textContent = data.source || '';
-            sourceElement.style.display = data.source ? 'block' : 'none';
-
-            const ingredientsList = document.getElementById('ingredientsList');
-            const noIngredientsMessage = document.getElementById('noIngredientsMessage');
-            ingredientsList.innerHTML = '';
-
-            const foundIngredients = data.foundIngredients || {};
-            if (Object.keys(foundIngredients).length > 0) {
-                noIngredientsMessage.classList.add('hidden');
-                for (const [category, info] of Object.entries(foundIngredients)) {
-                    const card = document.createElement('div');
-                    card.className = 'ingredient-card';
-                    card.innerHTML = `
-                        <span class="ingredient-icon">⚠️</span>
-                        <div class="ingredient-info">
-                            <div class="ingredient-english">${info.english}</div>
-                            <div class="ingredient-korean">${category}</div>
-                            <div class="ingredient-detected">${info.detected.join(', ')}</div>
-                        </div>
-                    `;
-                    ingredientsList.appendChild(card);
+    document.addEventListener('DOMContentLoaded', function() {
+        const modal = document.getElementById('guideModal');
+        if (modal) {
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal || e.target.classList.contains('modal-overlay')) {
+                    closeGuideModal();
                 }
-            } else {
-                noIngredientsMessage.classList.remove('hidden');
-            }
+            });
+        }
+    });
 
-            if (data.rawMaterials) {
-                document.getElementById('rawMaterials').textContent = data.rawMaterials;
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            closeGuideModal();
+        }
+    });
+
+    function displayResults(data) {
+        document.getElementById('productName').textContent = data.productName;
+        const sourceElement = document.getElementById('productSource');
+        sourceElement.textContent = data.source || '';
+        sourceElement.style.display = data.source ? 'block' : 'none';
+
+        const ingredientsList = document.getElementById('ingredientsList');
+        const noIngredientsMessage = document.getElementById('noIngredientsMessage');
+        ingredientsList.innerHTML = '';
+
+        const foundIngredients = data.foundIngredients || {};
+        if (Object.keys(foundIngredients).length > 0) {
+            noIngredientsMessage.classList.add('hidden');
+            for (const [category, info] of Object.entries(foundIngredients)) {
+                const card = document.createElement('div');
+                card.className = 'ingredient-card';
+                card.innerHTML = `
+                    <span class="ingredient-icon">⚠️</span>
+                    <div class="ingredient-info">
+                        <div class="ingredient-english">${info.english}</div>
+                        <div class="ingredient-korean">${category}</div>
+                        <div class="ingredient-detected">${info.detected.join(', ')}</div>
+                    </div>
+                `;
+                ingredientsList.appendChild(card);
             }
-            showResults();
+        } else {
+            noIngredientsMessage.classList.remove('hidden');
         }
 
-        function showLoading() { loading.classList.remove('hidden'); }
-        function hideLoading() { loading.classList.add('hidden'); }
-        function showError(message) { 
-            errorMessage.innerHTML = message;  // textContent → innerHTML로 변경
-            errorMessage.classList.remove('hidden'); 
+        if (data.rawMaterials) {
+            document.getElementById('rawMaterials').textContent = data.rawMaterials;
         }
-        function hideError() { errorMessage.classList.add('hidden'); }
-        function showResults() { results.classList.remove('hidden'); }
-        function hideResults() { results.classList.add('hidden'); }
-    </script>
-</body>
-</html>
+        showResults();
+    }
+
+    function showLoading() { loading.classList.remove('hidden'); }
+    function hideLoading() { loading.classList.add('hidden'); }
+    function showError(message) { 
+        errorMessage.innerHTML = message;
+        errorMessage.classList.remove('hidden'); 
+    }
+    function hideError() { errorMessage.classList.add('hidden'); }
+    function showResults() { results.classList.remove('hidden'); }
+    function hideResults() { results.classList.add('hidden'); }
+</script>
+{% endblock %}

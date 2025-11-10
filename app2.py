@@ -718,24 +718,7 @@ def product_requests_page():
     """게시판 페이지"""
     return render_template('product_requests.html')
 
-@app.route('/api/product-requests', methods=['GET'])
-def get_product_requests():
-    """요청 목록 조회"""
-    try:
-        limit = request.args.get('limit', 10, type=int)
-        
-        response = supabase.table('product_requests')\
-            .select('*')\
-            .order('created_at', desc=True)\
-            .limit(limit)\
-            .execute()
-        
-        return jsonify(response.data)
-    except Exception as e:
-        return jsonify({'error': str(e)}), 500
-@app.context_processor
-def inject_year():
-    return {'year': datetime.now().year}
+
 
 if __name__ == '__main__':
     import os

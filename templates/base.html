@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}ScanEat - Korea{% endblock %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    
+    {% block meta %}
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://scaneat.co.kr">
+    <meta property="og:title" content="ScanEat - Korea">
+    <meta property="og:description" content="Check ingredients in Korean food products. 한국 가공 식품의 원재료를 쉽게 확인하세요.">
+    <meta property="og:image" content="https://scaneat.co.kr/static/logo.png">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:site_name" content="ScanEat">
+    <meta property="og:locale" content="en_US">
+    {% endblock %}
+    
+    <style>
+        /* 네비게이션 스타일 */
+        .navbar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 12px 0;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .navbar-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 16px;
+            display: flex;
+            gap: 16px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            font-size: 14px;
+            padding: 8px 12px;
+            border-radius: 4px;
+            transition: all 0.3s;
+            white-space: nowrap;
+        }
+        .navbar a:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        .navbar-separator {
+            color: rgba(255,255,255,0.3);
+        }
+    </style>
+    
+    {% block head_extra %}{% endblock %}
+</head>
+<body>
+    <!-- ★ 상단 네비게이션: Home, About, Contact만 ★ -->
+    <div class="navbar">
+        <div class="navbar-container">
+            <a href="/">🏠 Home</a>
+            <span class="navbar-separator">|</span>
+            <a href="/about">ℹ️ About</a>
+            <span class="navbar-separator">|</span>
+            <a href="/contact">📧 Contact</a>
+        </div>
+    </div>
+
+    <div class="container">
+        {% block content %}
+        {% endblock %}
+    </div>
+
+    <!-- ★ 푸터: Privacy와 Terms만 ★ -->
+    <footer>
+        <p>&copy; 2025 ScanEat. All rights reserved.</p>
+        <div class="footer-links">
+            <a href="/privacy">Privacy</a>
+            <span class="footer-divider">|</span>
+            <a href="/terms">Terms</a>
+        </div>
+    </footer>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>

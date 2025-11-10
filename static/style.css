@@ -414,6 +414,7 @@ header p {
     border-radius: 15px;
     border-left: 5px solid #ffc107;
     box-shadow: 0 5px 15px rgba(255, 193, 7, 0.15);
+    margin-bottom: 50px; /* ★ Important Notice와 푸터 사이 여백 ★ */
 }
 
 .disclaimer-section h3 {
@@ -463,7 +464,6 @@ header p {
     text-align: center;
     font-style: italic;
 }
-
 /* ===== MODAL ===== */
 .modal {
     position: fixed;
@@ -676,6 +676,10 @@ header p {
 
 /* ===== RESPONSIVE ===== */
 @media (max-width: 768px) {
+    body {
+        padding: 15px;
+    }
+
     header {
         padding: 30px 15px;
     }
@@ -716,10 +720,15 @@ header p {
 
     .disclaimer-section {
         padding: 20px;
+        margin-bottom: 40px;
     }
 }
 
 @media (max-width: 480px) {
+    body {
+        padding: 10px;
+    }
+
     header {
         padding: 20px 10px;
     }
@@ -749,4 +758,86 @@ header p {
     .guide-content h2 {
         font-size: 1.3rem;
     }
+
+    .disclaimer-section {
+        padding: 20px 15px;
+        margin-bottom: 35px;
+    }
+} /* ★ 이 중괄호가 480px 미디어 쿼리를 닫음 ★ */
+
+/* ===== FOOTER - 모든 화면 크기에 적용 (미디어 쿼리 밖에 위치) ===== */
+footer {
+    background: transparent !important;
+    color: white !important;
+    padding: 30px 20px !important;
+    text-align: center !important;
+    margin-top: 0 !important;
+    border-top: 2px solid rgba(255, 255, 255, 0.4) !important;
+    width: 100% !important;
+}
+
+footer p {
+    margin: 0 auto 12px auto !important;
+    font-size: 0.9rem !important;
+    color: white !important;
+    text-align: center !important;
+    max-width: 100% !important;
+}
+
+.footer-links {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 12px !important;
+    margin: 8px auto 0 auto !important;
+    text-align: center !important;
+}
+
+.footer-links a {
+    color: white !important;
+    text-decoration: none !important;
+    font-weight: 400 !important;
+    font-size: 0.9rem !important;
+    transition: all 0.3s !important;
+}
+
+.footer-links a:hover {
+    color: #ffffff !important;
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.8) !important;
+    text-decoration: underline !important;
+}
+
+.footer-divider {
+    color: rgba(255, 255, 255, 0.7) !important;
+    margin: 0 !important;
+}
+
+/* ===== FOOTER 반응형 (선택적) ===== */
+@media (max-width: 768px) {
+    footer {
+        padding: 25px 15px !important;
+    }
+    
+    footer p {
+        font-size: 0.85rem !important;
+    }
+    
+    .footer-links a {
+        font-size: 0.85rem !important;
+    }
+}
+
+@media (max-width: 480px) {
+    footer {
+        padding: 20px 10px !important;
+    }
+    
+    footer p {
+        font-size: 0.8rem !important;
+    }
+    
+    .footer-links a {
+        font-size: 0.8rem !important;
+    }
+}
 }
