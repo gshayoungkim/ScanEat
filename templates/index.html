@@ -20,48 +20,65 @@
     }
     
     .scanner-controls {
-        display: flex;
-        gap: 10px;
-        justify-content: center;
-        margin: 15px 0;
-        flex-wrap: wrap;
+    display: flex;
+    gap: 5px;
+    justify-content: space-between; /* center → space-between */
+    margin: 15px 0;
+    flex-wrap: nowrap; /* wrap → nowrap */
+}
+
+.scanner-controls button {
+    flex: 1; /* 동일한 너비로 분배 */
+    padding: 10px 8px;
+    font-size: 14px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    min-width: 0; /* flex 아이템의 최소 너비 제한 해제 */
+}
+
+.btn-camera {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.btn-stop {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    color: white;
+}
+
+.btn-upload {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    color: white;
+}
+
+.scanner-controls button:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+}
+
+.scanner-controls button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+/* 작은 화면 대응 (iPhone 15 Pro: 393px width) */
+@media (max-width: 400px) {
+    .scanner-controls {
+        gap: 6px;
     }
     
     .scanner-controls button {
-        padding: 12px 24px;
-        font-size: 16px;
-        border: none;
-        border-radius: 8px;
-        cursor: pointer;
-        font-weight: 600;
-        transition: all 0.3s ease;
+        padding: 10px 12px;
+        font-size: 13px;
+        flex: 1;
+        min-width: 0;
     }
-    
-    .btn-camera {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-    }
-    
-    .btn-stop {
-        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-        color: white;
-    }
-    
-    .btn-upload {
-        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-        color: white;
-    }
-    
-    .scanner-controls button:hover:not(:disabled) {
-        transform: translateY(-2px);
-        box-shadow: 0 5px 15px rgba(0,0,0,0.2);
-    }
-    
-    .scanner-controls button:disabled {
-        opacity: 0.5;
-        cursor: not-allowed;
-        transform: none;
-    }
+}
     
     .scanner-section {
         background: #f8f9fa;
@@ -98,6 +115,64 @@
         background: #f8d7da;
         color: #721c24;
     }
+
+    /* 스캔 가이드 메시지 */
+    .scan-guide {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(0, 0, 0, 0.8);
+        color: white;
+        padding: 15px 25px;
+        border-radius: 12px;
+        font-size: 16px;
+        font-weight: 600;
+        text-align: center;
+        z-index: 1000;
+        pointer-events: none;
+        animation: pulse 2s infinite;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+        max-width: 80%;
+    }
+    
+    @keyframes pulse {
+        0%, 100% {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+        }
+        50% {
+            opacity: 0.8;
+            transform: translate(-50%, -50%) scale(1.05);
+        }
+    }
+    
+    /* reader 컨테이너를 relative로 */
+    #reader {
+        width: 100%;
+        max-width: 500px;
+        margin: 20px auto;
+        border: 2px solid #007bff;
+        border-radius: 12px;
+        overflow: hidden;
+        position: relative; /* 추가 */
+    }
+    
+    /* 스캔 성공 시 초록색 플래시 */
+    @keyframes successFlash {
+        0%, 100% {
+            border-color: #007bff;
+        }
+        50% {
+            border-color: #28a745;
+            box-shadow: 0 0 20px rgba(40, 167, 69, 0.8);
+        }
+    }
+    
+    #reader.success-flash {
+        animation: successFlash 0.5s ease-in-out 2;
+    }
+
     
     #file-input {
         display: none;
@@ -284,7 +359,6 @@
         scannerSection.classList.toggle('active');
         
         if (isOpening) {
-            // 스캐너 열 때
             hideResults();
             hideError();
             searchInput.value = '';
@@ -304,39 +378,7 @@
         }
     }
 
-    // 카메라 중지 (Safari 호환성 개선)
-    function stopCamera() {
-        if (html5QrCodeScanner && isScanning) {
-            html5QrCodeScanner.stop()
-                .then(() => {
-                    isScanning = false;
-                    document.getElementById('startCameraBtn').disabled = false;
-                    document.getElementById('stopCameraBtn').disabled = true;
-                    document.getElementById('scan-status').style.display = 'none';
-                    console.log('Camera stopped');
-                    
-                    html5QrCodeScanner.clear()
-                        .then(() => {
-                            html5QrCodeScanner = null;
-                            console.log('Scanner cleared');
-                        })
-                        .catch(err => console.log('Clear error:', err));
-                })
-                .catch((err) => {
-                    console.error("Camera stop error:", err);
-                    isScanning = false;
-                    
-                    try {
-                        html5QrCodeScanner.clear().catch(() => {});
-                        html5QrCodeScanner = null;
-                    } catch(e) {
-                        console.log('Force clear error:', e);
-                    }
-                });
-        }
-    }
-
-    // 카메라 시작 (Safari 호환성 개선)
+    // 카메라 시작 (가이드 메시지 추가)
     function startCamera() {
         const readerDiv = document.getElementById('reader');
         const statusDiv = document.getElementById('scan-status');
@@ -388,6 +430,9 @@
             statusDiv.style.display = 'block';
             console.log('Camera started successfully');
             
+            // 가이드 메시지 표시
+            showScanGuide();
+            
             setTimeout(() => {
                 readerDiv.scrollIntoView({ 
                     behavior: 'smooth', 
@@ -402,12 +447,68 @@
         });
     }
 
-    // 스캔 성공
+    // 스캔 가이드 메시지 표시
+    function showScanGuide() {
+        const readerDiv = document.getElementById('reader');
+        
+        const existingGuide = readerDiv.querySelector('.scan-guide');
+        if (existingGuide) {
+            existingGuide.remove();
+        }
+        
+        const messages = [
+            '📷 카메라를 바코드에 맞춰주세요<br><small>Align camera with barcode</small>',
+            '🔍 조금 더 가까이 와주세요<br><small>Move closer to the barcode</small>',
+            '✋ 그대로 유지해주세요!<br><small>Hold steady!</small>',
+            '💡 밝은 곳으로 이동해보세요<br><small>Move to better lighting</small>',
+            '📐 바코드를 수평으로 맞춰주세요<br><small>Keep barcode straight</small>'
+        ];
+        
+        let currentMessageIndex = 0;
+        
+        const guideElement = document.createElement('div');
+        guideElement.className = 'scan-guide';
+        guideElement.innerHTML = messages[0];
+        readerDiv.appendChild(guideElement);
+        
+        const guideInterval = setInterval(() => {
+            if (!isScanning) {
+                clearInterval(guideInterval);
+                if (guideElement && guideElement.parentNode) {
+                    guideElement.remove();
+                }
+                return;
+            }
+            
+            currentMessageIndex = (currentMessageIndex + 1) % messages.length;
+            guideElement.innerHTML = messages[currentMessageIndex];
+        }, 3000);
+        
+        window.currentGuideInterval = guideInterval;
+    }
+
+    // 스캔 성공 (가이드 제거 + 성공 효과)
     function onScanSuccess(decodedText, decodedResult) {
         console.log(`Barcode detected: ${decodedText}`);
         
         const statusDiv = document.getElementById('scan-status');
+        const readerDiv = document.getElementById('reader');
         searchInput.value = decodedText;
+        
+        // 가이드 메시지 제거
+        const guideElement = readerDiv.querySelector('.scan-guide');
+        if (guideElement) {
+            guideElement.remove();
+        }
+        if (window.currentGuideInterval) {
+            clearInterval(window.currentGuideInterval);
+        }
+        
+        // 성공 플래시 효과
+        readerDiv.classList.add('success-flash');
+        setTimeout(() => {
+            readerDiv.classList.remove('success-flash');
+        }, 1000);
         
         stopCamera();
         
@@ -421,6 +522,50 @@
 
     function onScanFailure(error) {
         // 스캔 실패는 정상 작동 중에도 발생하므로 무시
+    }
+
+    // 카메라 중지 (가이드 정리 추가)
+    function stopCamera() {
+        // 가이드 메시지 정리
+        if (window.currentGuideInterval) {
+            clearInterval(window.currentGuideInterval);
+            window.currentGuideInterval = null;
+        }
+        
+        const readerDiv = document.getElementById('reader');
+        const guideElement = readerDiv.querySelector('.scan-guide');
+        if (guideElement) {
+            guideElement.remove();
+        }
+        
+        if (html5QrCodeScanner && isScanning) {
+            html5QrCodeScanner.stop()
+                .then(() => {
+                    isScanning = false;
+                    document.getElementById('startCameraBtn').disabled = false;
+                    document.getElementById('stopCameraBtn').disabled = true;
+                    document.getElementById('scan-status').style.display = 'none';
+                    console.log('Camera stopped');
+                    
+                    html5QrCodeScanner.clear()
+                        .then(() => {
+                            html5QrCodeScanner = null;
+                            console.log('Scanner cleared');
+                        })
+                        .catch(err => console.log('Clear error:', err));
+                })
+                .catch((err) => {
+                    console.error("Camera stop error:", err);
+                    isScanning = false;
+                    
+                    try {
+                        html5QrCodeScanner.clear().catch(() => {});
+                        html5QrCodeScanner = null;
+                    } catch(e) {
+                        console.log('Force clear error:', e);
+                    }
+                });
+        }
     }
 
     // 파일 업로드 트리거
@@ -661,7 +806,6 @@
         }
         showResults();
         
-        // 결과 표시 후 스캐너 섹션 숨기기
         document.getElementById('scannerSection').classList.remove('active');
     }
 
@@ -675,7 +819,6 @@
     function showResults() { results.classList.remove('hidden'); }
     function hideResults() { results.classList.add('hidden'); }
 
-    // 페이지 언로드/백그라운드 전환 시 카메라 정리
     window.addEventListener('beforeunload', function() {
         stopCamera();
     });
