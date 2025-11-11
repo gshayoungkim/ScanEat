@@ -1,188 +1,189 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Terms of Service - Ingredient Checker</title>
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            padding: 20px;
-        }
-        .navbar {
-            background: rgba(255,255,255,0.1);
-            padding: 12px 0;
-            margin-bottom: 24px;
-            border-radius: 8px;
-            backdrop-filter: blur(10px);
-        }
-        .navbar-container {
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 0 16px;
-            display: flex;
-            gap: 16px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-        .navbar a {
-            color: white;
-            text-decoration: none;
-            font-size: 14px;
-            padding: 8px 12px;
-            border-radius: 4px;
-            transition: all 0.3s;
-        }
-        .navbar a:hover { background: rgba(255,255,255,0.2); }
-        .navbar-separator { color: rgba(255,255,255,0.3); }
-        .container {
-            max-width: 900px;
-            margin: 0 auto;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 8px 32px rgba(0,0,0,0.2);
-            padding: 40px;
-        }
-        h1 { font-size: 32px; margin-bottom: 8px; color: #333; }
-        .last-updated { color: #999; font-size: 12px; margin-bottom: 24px; }
-        h2 { font-size: 20px; margin-top: 24px; margin-bottom: 12px; color: #667eea; border-bottom: 2px solid #667eea; padding-bottom: 8px; }
-        p { line-height: 1.8; color: #555; margin-bottom: 16px; }
-        ul, ol { margin-left: 20px; line-height: 1.8; }
-        li { margin-bottom: 8px; color: #555; }
-        .back-link {
-            display: inline-block;
-            margin-bottom: 24px;
-            padding: 10px 16px;
-            background: #667eea;
-            color: white;
-            text-decoration: none;
-            border-radius: 4px;
-        }
-        .back-link:hover { background: #764ba2; }
-    </style>
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9118651721155215"
-     crossorigin="anonymous"></script>
-</head>
-<body>
-    <div class="navbar">
-        <div class="navbar-container">
-            <a href="/">🏠 Home</a>
-            <span class="navbar-separator">|</span>
-            <a href="/about">ℹ️ About</a>
-            <span class="navbar-separator">|</span>
-            <a href="/privacy">🔒 Privacy</a>
-            <span class="navbar-separator">|</span>
-            <a href="/terms">📋 Terms</a>
-            <span class="navbar-separator">|</span>
-            <a href="/contact">📧 Contact</a>
-        </div>
+{% extends "base.html" %}
+
+{% block title %}Terms of Service - ScanEat{% endblock %}
+
+{% block head_extra %}
+<style>
+    /* 페이지별 스타일 */
+    body { 
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .terms-container {
+        max-width: 900px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+        padding: 40px;
+        flex: 1;
+    }
+    
+    h1 { font-size: 32px; margin-bottom: 8px; color: #333; }
+    .last-updated { color: #999; font-size: 12px; margin-bottom: 24px; }
+    h2 { font-size: 20px; margin-top: 24px; margin-bottom: 12px; color: #667eea; border-bottom: 2px solid #667eea; padding-bottom: 8px; }
+    p { line-height: 1.8; color: #555; margin-bottom: 16px; }
+    ul, ol { margin-left: 20px; line-height: 1.8; }
+    li { margin-bottom: 8px; color: #555; }
+    
+    .back-link {
+        display: inline-block;
+        margin-bottom: 24px;
+        padding: 10px 16px;
+        background: #667eea;
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+        transition: all 0.3s;
+    }
+    .back-link:hover { 
+        background: #764ba2;
+        transform: translateX(-3px);
+    }
+    
+    /* 탭 버튼 스타일 */
+    .tab-buttons {
+        display: flex;
+        gap: 12px;
+        margin-bottom: 24px;
+        border-bottom: 2px solid #e0e0e0;
+    }
+    .tab-button {
+        padding: 12px 24px;
+        border: none;
+        cursor: pointer;
+        font-size: 16px;
+        background: transparent;
+        color: #333;
+        border-radius: 4px 4px 0 0;
+        transition: all 0.3s;
+    }
+    .tab-button.active {
+        background: #667eea;
+        color: white;
+        font-weight: bold;
+    }
+    .tab-button:hover {
+        background: rgba(102, 126, 234, 0.1);
+    }
+</style>
+<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-9118651721155215"
+ crossorigin="anonymous"></script>
+{% endblock %}
+
+{% block content %}
+<div class="terms-container">
+    <a href="/" class="back-link">← Back to Home</a>
+
+    <!-- 탭 버튼 -->
+    <div class="tab-buttons">
+        <button class="tab-button active" onclick="switchLanguage('en', event)">English</button>
+        <button class="tab-button" onclick="switchLanguage('ko', event)">한국어</button>
     </div>
 
-    <div class="container">
-        <a href="/" class="back-link">← Back to Home</a>
+    <!-- 영어 콘텐츠 -->
+    <div id="en" style="display: block;">
+        <h1>Terms of Service</h1>
+        <p class="last-updated">Last Updated: November 2025</p>
 
-        <div style="display: flex; gap: 12px; margin-bottom: 24px; border-bottom: 2px solid #e0e0e0;">
-            <button style="padding: 12px 24px; background: #667eea; color: white; border: none; cursor: pointer; font-size: 16px; border-radius: 4px 4px 0 0; font-weight: bold;" onclick="switchLanguage('en', event)">English</button>
-            <button style="padding: 12px 24px; background: transparent; color: #333; border: none; cursor: pointer; font-size: 16px;" onclick="switchLanguage('ko', event)">한국어</button>
-        </div>
+        <p>These Terms of Service govern your access to and use of the ScanEat service. By accessing our service, you agree to be bound by these terms.</p>
 
-        <div id="en" style="display: block;">
-            <h1>Terms of Service</h1>
-            <p class="last-updated">Last Updated: November 2025</p>
+        <h2>1. Service Overview</h2>
+        <p>ScanEat is a free web-based tool that helps users identify food ingredients in Korean products.</p>
+        <ul>
+            <li>Search for processed food products using product report numbers or barcodes</li>
+            <li>View ingredient lists for identified products</li>
+            <li>Identify potential allergens and forbidden ingredients</li>
+        </ul>
 
-            <p>These Terms of Service govern your access to and use of the Ingredient Checker service. By accessing our service, you agree to be bound by these terms.</p>
+        <h2>2. Use License</h2>
+        <p>Permission is granted to use this service for personal, non-commercial purposes only. You agree not to:</p>
+        <ul>
+            <li>Modify or copy the materials</li>
+            <li>Use the service for any commercial purpose</li>
+            <li>Interfere with the normal operation of the service</li>
+            <li>Violate any applicable laws or regulations</li>
+        </ul>
 
-            <h2>1. Service Overview</h2>
-            <p>Ingredient Checker is a free web-based tool that helps users identify food ingredients in Korean products.</p>
-            <ul>
-                <li>Search for processed food products using product report numbers or barcodes</li>
-                <li>View ingredient lists for identified products</li>
-                <li>Identify potential allergens and forbidden ingredients</li>
-            </ul>
+        <h2>3. Medical Disclaimer</h2>
+        <p>The information provided is for informational purposes only and is not a substitute for professional medical advice. If you have a severe food allergy:</p>
+        <ul>
+            <li>Always consult with a healthcare professional before consuming new foods</li>
+            <li>Contact the manufacturer directly for comprehensive allergen information</li>
+            <li>Do not rely solely on this service for critical health decisions</li>
+        </ul>
 
-            <h2>2. Use License</h2>
-            <p>Permission is granted to use this service for personal, non-commercial purposes only. You agree not to:</p>
-            <ul>
-                <li>Modify or copy the materials</li>
-                <li>Use the service for any commercial purpose</li>
-                <li>Interfere with the normal operation of the service</li>
-                <li>Violate any applicable laws or regulations</li>
-            </ul>
+        <h2>4. Accuracy of Materials</h2>
+        <p>While we strive to provide accurate information, we cannot guarantee that all data is current or complete. Manufacturers may change ingredients without notice.</p>
 
-            <h2>3. Medical Disclaimer</h2>
-            <p>The information provided is for informational purposes only and is not a substitute for professional medical advice. If you have a severe food allergy:</p>
-            <ul>
-                <li>Always consult with a healthcare professional before consuming new foods</li>
-                <li>Contact the manufacturer directly for comprehensive allergen information</li>
-                <li>Do not rely solely on this service for critical health decisions</li>
-            </ul>
+        <h2>5. Governing Law</h2>
+        <p>These terms are governed by the laws of the Republic of Korea.</p>
 
-            <h2>4. Accuracy of Materials</h2>
-            <p>While we strive to provide accurate information, we cannot guarantee that all data is current or complete. Manufacturers may change ingredients without notice.</p>
-
-            <h2>5. Governing Law</h2>
-            <p>These terms are governed by the laws of the Republic of Korea.</p>
-
-            <h2>6. Contact</h2>
-            <p>For questions about these Terms of Service, please contact: <strong>contact.scaneat@gmail.com</strong></p>
-        </div>
-
-        <div id="ko" style="display: none;">
-            <h1>이용약관</h1>
-            <p class="last-updated">최종 수정일: 2025년 11월</p>
-
-            <p>본 이용약관은 원재료 검출 서비스에 대한 귀하의 접근 및 이용을 규율합니다. 당사 서비스에 접속함으로써 귀하는 본 약관에 동의하게 됩니다.</p>
-
-            <h2>1. 서비스 개요</h2>
-            <p>원재료 검출은 사용자가 한국 식품의 원재료를 확인할 수 있도록 도와주는 무료 웹 기반 도구입니다.</p>
-            <ul>
-                <li>품목보고번호 또는 바코드를 사용하여 가공식품 검색</li>
-                <li>확인된 제품의 원재료명 확인</li>
-                <li>잠재적 알러지 유발물질 및 금기 성분 식별</li>
-            </ul>
-
-            <h2>2. 이용 라이선스</h2>
-            <p>본 서비스는 개인적이고 비상업적인 목적으로만 사용할 수 있습니다. 귀하는 다음을 할 수 없습니다:</p>
-            <ul>
-                <li>자료를 수정하거나 복사</li>
-                <li>상업적 목적으로 서비스 사용</li>
-                <li>서비스의 정상 작동 방해</li>
-                <li>적용법 또는 규정 위반</li>
-            </ul>
-
-            <h2>3. 의료 면책 조항</h2>
-            <p>제공하는 정보는 정보 제공 목적이며 전문 의료 자문을 대체하지 않습니다. 심한 식품 알러지가 있는 경우:</p>
-            <ul>
-                <li>새로운 음식을 섭취하기 전에 항상 의료 전문가와 상담</li>
-                <li>포괄적인 알러지 정보는 제조사에 직접 문의</li>
-                <li>중요한 건강 결정을 위해 본 서비스만을 의존하지 마세요</li>
-            </ul>
-
-            <h2>4. 자료의 정확성</h2>
-            <p>정확한 정보 제공을 위해 노력하지만, 모든 데이터가 최신 정보임을 보장할 수 없습니다. 제조사는 사전 통지 없이 원재료를 변경할 수 있습니다.</p>
-
-            <h2>5. 준거법</h2>
-            <p>본 약관은 대한민국 법에 따라 규율됩니다.</p>
-
-            <h2>6. 문의</h2>
-            <p>본 이용약관에 대한 질문이 있으시면 <strong>contact.scaneat@gmail.com</strong>으로 문의하시기 바랍니다.</p>
-        </div>
+        <h2>6. Contact</h2>
+        <p>For questions about these Terms of Service, please contact: <strong>contact.scaneat@gmail.com</strong></p>
     </div>
 
-    <script>
-        function switchLanguage(lang, event) {
-            event.preventDefault();
-            document.getElementById('en').style.display = lang === 'en' ? 'block' : 'none';
-            document.getElementById('ko').style.display = lang === 'ko' ? 'block' : 'none';
-            const buttons = event.target.parentElement.querySelectorAll('button');
-            buttons.forEach(btn => { btn.style.background = 'transparent'; btn.style.color = '#333'; btn.style.fontWeight = 'normal'; });
-            event.target.style.background = '#667eea';
-            event.target.style.color = 'white';
-            event.target.style.fontWeight = 'bold';
-        }
-    </script>
-</body>
-</html>
+    <!-- 한국어 콘텐츠 -->
+    <div id="ko" style="display: none;">
+        <h1>이용약관</h1>
+        <p class="last-updated">최종 수정일: 2025년 11월</p>
+
+        <p>본 이용약관은 ScanEat 서비스에 대한 귀하의 접근 및 이용을 규율합니다. 당사 서비스에 접속함으로써 귀하는 본 약관에 동의하게 됩니다.</p>
+
+        <h2>1. 서비스 개요</h2>
+        <p>ScanEat은 사용자가 한국 식품의 원재료를 확인할 수 있도록 도와주는 무료 웹 기반 도구입니다.</p>
+        <ul>
+            <li>품목보고번호 또는 바코드를 사용하여 가공식품 검색</li>
+            <li>확인된 제품의 원재료명 확인</li>
+            <li>잠재적 알러지 유발물질 및 금기 성분 식별</li>
+        </ul>
+
+        <h2>2. 이용 라이선스</h2>
+        <p>본 서비스는 개인적이고 비상업적인 목적으로만 사용할 수 있습니다. 귀하는 다음을 할 수 없습니다:</p>
+        <ul>
+            <li>자료를 수정하거나 복사</li>
+            <li>상업적 목적으로 서비스 사용</li>
+            <li>서비스의 정상 작동 방해</li>
+            <li>적용법 또는 규정 위반</li>
+        </ul>
+
+        <h2>3. 의료 면책 조항</h2>
+        <p>제공하는 정보는 정보 제공 목적이며 전문 의료 자문을 대체하지 않습니다. 심한 식품 알러지가 있는 경우:</p>
+        <ul>
+            <li>새로운 음식을 섭취하기 전에 항상 의료 전문가와 상담</li>
+            <li>포괄적인 알러지 정보는 제조사에 직접 문의</li>
+            <li>중요한 건강 결정을 위해 본 서비스만을 의존하지 마세요</li>
+        </ul>
+
+        <h2>4. 자료의 정확성</h2>
+        <p>정확한 정보 제공을 위해 노력하지만, 모든 데이터가 최신 정보임을 보장할 수 없습니다. 제조사는 사전 통지 없이 원재료를 변경할 수 있습니다.</p>
+
+        <h2>5. 준거법</h2>
+        <p>본 약관은 대한민국 법에 따라 규율됩니다.</p>
+
+        <h2>6. 문의</h2>
+        <p>본 이용약관에 대한 질문이 있으시면 <strong>contact.scaneat@gmail.com</strong>으로 문의하시기 바랍니다.</p>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    function switchLanguage(lang, event) {
+        event.preventDefault();
+        document.getElementById('en').style.display = lang === 'en' ? 'block' : 'none';
+        document.getElementById('ko').style.display = lang === 'ko' ? 'block' : 'none';
+        
+        // 버튼 스타일 변경
+        const buttons = document.querySelectorAll('.tab-button');
+        buttons.forEach(btn => {
+            btn.classList.remove('active');
+        });
+        event.target.classList.add('active');
+    }
+</script>
+{% endblock %}
