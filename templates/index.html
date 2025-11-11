@@ -10,14 +10,6 @@
 <!-- Quagga2 라이브러리 (백업용) -->
 <script src="https://cdn.jsdelivr.net/npm/@ericblade/quagga2/dist/quagga.min.js"></script>
 <style>
-    #reader {
-        width: 100%;
-        max-width: 500px;
-        margin: 20px auto;
-        border: 2px solid #007bff;
-        border-radius: 12px;
-        overflow: hidden;
-    }
     
     .scanner-controls {
     display: flex;
@@ -177,8 +169,382 @@
     #file-input {
         display: none;
     }
+        /* Search 섹션 스타일 추가 */
+    .search-section {
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        margin: 30px auto;
+        max-width: 600px;
+    }
+    
+    .search-label {
+        display: block;
+        font-size: 18px;
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 8px;
+    }
+    
+    .search-tip {
+        color: #666;
+        font-size: 14px;
+        margin-bottom: 20px;
+    }
+    
+    .search-input-group {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .search-input-group input {
+        padding: 15px;
+        font-size: 16px;
+        border: 2px solid #ddd;
+        border-radius: 8px;
+        transition: all 0.3s;
+        font-family: 'Segoe UI', sans-serif;
+    }
+    
+    .search-input-group input:focus {
+        outline: none;
+        border-color: #667eea;
+        box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    }
+    
+    .button-group {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+    }
+    
+    .button-group button {
+        flex: 1;
+        min-width: 100px;
+        padding: 14px 20px;
+        font-size: 16px;
+        font-weight: 600;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.3s;
+        color: white;
+    }
+    
+    #searchBtn {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
+    
+    #searchBtn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+    
+    #scanToggleBtn {
+        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+    }
+    
+    #scanToggleBtn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(240, 147, 251, 0.4);
+    }
+    
+    #helpBtn {
+        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+    }
+    
+    #helpBtn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(79, 172, 254, 0.4);
+    }
+    
+    /* 모달 스타일 */
+    .modal {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .modal.hidden {
+        display: none;
+    }
+    
+    .modal-overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(5px);
+    }
+    
+    .modal-content {
+        position: relative;
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        max-width: 600px;
+        max-height: 80vh;
+        overflow-y: auto;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        z-index: 10000;
+        margin: 20px;
+    }
+    
+    .modal-close {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: none;
+        border: none;
+        font-size: 30px;
+        cursor: pointer;
+        color: #999;
+        line-height: 1;
+        padding: 0;
+        width: 30px;
+        height: 30px;
+    }
+    
+    .modal-close:hover {
+        color: #333;
+    }
+    
+    .guide-content h2 {
+        margin-bottom: 20px;
+        color: #333;
+    }
+    
+    .guide-section {
+        margin-bottom: 24px;
+    }
+    
+    .guide-section h3 {
+        color: #667eea;
+        margin-bottom: 12px;
+    }
+    
+    .guide-section p {
+        color: #666;
+        line-height: 1.6;
+        margin-bottom: 12px;
+    }
+    
+    .guide-tips {
+        background: #f0f4ff;
+        padding: 20px;
+        border-radius: 10px;
+        border-left: 4px solid #667eea;
+    }
+    
+    .guide-tips ul {
+        margin: 12px 0 0 20px;
+    }
+    
+    .guide-tips li {
+        color: #555;
+        margin-bottom: 8px;
+        line-height: 1.6;
+    }
+    
+    /* 로딩 스타일 */
+    .loading {
+        text-align: center;
+        padding: 40px;
+        background: white;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        margin: 30px auto;
+        max-width: 400px;
+    }
+    
+    .loading.hidden {
+        display: none;
+    }
+    
+    .spinner {
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid #667eea;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 20px;
+    }
+    
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+        
+    /* 에러 메시지 - 더 작고 컴팩트하게 */
+    .error-message {
+        background: #fff3cd;
+        border: 2px solid #ffc107;
+        border-radius: 10px;
+        padding: 16px 20px; /* 20px → 16px 20px */
+        margin: 20px auto;
+        max-width: 500px; /* 600px → 500px */
+        color: #856404;
+        line-height: 1.6; /* 1.8 → 1.6 */
+        font-size: 14px; /* 추가 */
+    }
+
+    .error-message.hidden {
+        display: none;
+    }
+
+    /* 에러 메시지 내부 div 스타일 */
+    .error-message div {
+        line-height: 1.5; /* 2 → 1.5 */
+    }
+
+    .error-message strong {
+        display: block;
+        margin-bottom: 8px; /* 추가 */
+    }
+
+    .error-message br {
+        line-height: 1.4; /* 줄간격 더 줄이기 */
+    }
+
+    
+    /* 결과 섹션 */
+    .results {
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        margin: 30px auto;
+        max-width: 800px;
+    }
+    
+    .results.hidden {
+        display: none;
+    }
+    
+    .product-info h2 {
+        color: #333;
+        margin-bottom: 16px;
+    }
+    
+    .product-name {
+        font-size: 20px;
+        font-weight: 700;
+        color: #667eea;
+        margin-bottom: 8px;
+    }
+    
+    .product-source {
+        color: #999;
+        font-size: 14px;
+        margin-bottom: 24px;
+    }
+    
+    .ingredients-section h3 {
+        color: #333;
+        margin: 24px 0 16px 0;
+    }
+    
+    .ingredients-list {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+    }
+    
+    .ingredient-card {
+        background: #fff3cd;
+        border-left: 4px solid #ffc107;
+        padding: 16px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    
+    .ingredient-icon {
+        font-size: 24px;
+    }
+    
+    .ingredient-info {
+        flex: 1;
+    }
+    
+    .ingredient-english {
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 4px;
+    }
+    
+    .ingredient-korean {
+        color: #666;
+        font-size: 14px;
+        margin-bottom: 4px;
+    }
+    
+    .ingredient-detected {
+        color: #856404;
+        font-size: 13px;
+        font-weight: 600;
+    }
+    
+    .no-ingredients {
+        background: #d4edda;
+        border: 2px solid #28a745;
+        border-radius: 10px;
+        padding: 20px;
+        text-align: center;
+        color: #155724;
+        font-weight: 600;
+    }
+    
+    .no-ingredients.hidden {
+        display: none;
+    }
+    
+    .raw-materials {
+        margin-top: 24px;
+        padding-top: 24px;
+        border-top: 2px solid #eee;
+    }
+    
+    .raw-materials h3 {
+        color: #333;
+        margin-bottom: 12px;
+    }
+    
+    .raw-materials-text {
+        background: #f8f9fa;
+        padding: 16px;
+        border-radius: 8px;
+        color: #555;
+        line-height: 1.8;
+    }
+    
+    /* 모바일 대응 */
+    @media (max-width: 768px) {
+        .button-group button {
+            font-size: 14px;
+            padding: 12px 16px;
+        }
+        
+        .modal-content {
+            max-width: 90%;
+            padding: 20px;
+        }
+    }
 </style>
 {% endblock %}
+
 
 {% block content %}
 <header>
@@ -379,73 +745,126 @@
     }
 
     // 카메라 시작 (가이드 메시지 추가)
-    function startCamera() {
-        const readerDiv = document.getElementById('reader');
-        const statusDiv = document.getElementById('scan-status');
-        const startBtn = document.getElementById('startCameraBtn');
-        const stopBtn = document.getElementById('stopCameraBtn');
+   // 카메라 시작 (에러 처리 개선)
+function startCamera() {
+    const readerDiv = document.getElementById('reader');
+    const statusDiv = document.getElementById('scan-status');
+    const startBtn = document.getElementById('startCameraBtn');
+    const stopBtn = document.getElementById('stopCameraBtn');
 
-        if (isScanning) {
-            console.log('Already scanning');
-            return;
-        }
-
-        if (html5QrCodeScanner) {
-            console.log('Cleaning up previous scanner instance');
-            try {
-                html5QrCodeScanner.clear().catch(() => {});
-            } catch(e) {
-                console.log('Cleanup error:', e);
-            }
-            html5QrCodeScanner = null;
-        }
-
-        const config = {
-            fps: 10,
-            qrbox: { width: 250, height: 250 },
-            formatsToSupport: [
-                Html5QrcodeSupportedFormats.EAN_13,
-                Html5QrcodeSupportedFormats.EAN_8,
-                Html5QrcodeSupportedFormats.UPC_A,
-                Html5QrcodeSupportedFormats.UPC_E,
-                Html5QrcodeSupportedFormats.CODE_128,
-                Html5QrcodeSupportedFormats.CODE_39,
-                Html5QrcodeSupportedFormats.QR_CODE
-            ]
-        };
-
-        html5QrCodeScanner = new Html5Qrcode("reader");
-        
-        html5QrCodeScanner.start(
-            { facingMode: "environment" },
-            config,
-            onScanSuccess,
-            onScanFailure
-        ).then(() => {
-            isScanning = true;
-            startBtn.disabled = true;
-            stopBtn.disabled = false;
-            statusDiv.textContent = '📷 Scanning... Point camera at barcode';
-            statusDiv.className = 'scan-status scanning';
-            statusDiv.style.display = 'block';
-            console.log('Camera started successfully');
-            
-            // 가이드 메시지 표시
-            showScanGuide();
-            
-            setTimeout(() => {
-                readerDiv.scrollIntoView({ 
-                    behavior: 'smooth', 
-                    block: 'center' 
-                });
-            }, 300);
-        }).catch((err) => {
-            console.error('Camera start error:', err);
-            showError(`Camera error: ${err}. Please check camera permissions or try refreshing the page.`);
-            isScanning = false;
-            html5QrCodeScanner = null;
-        });
+    if (isScanning) {
+        console.log('Already scanning');
+        return;
     }
+
+    if (html5QrCodeScanner) {
+        console.log('Cleaning up previous scanner instance');
+        try {
+            html5QrCodeScanner.clear().catch(() => {});
+        } catch(e) {
+            console.log('Cleanup error:', e);
+        }
+        html5QrCodeScanner = null;
+    }
+
+    const config = {
+        fps: 10,
+        qrbox: { width: 250, height: 250 },
+        formatsToSupport: [
+            Html5QrcodeSupportedFormats.EAN_13,
+            Html5QrcodeSupportedFormats.EAN_8,
+            Html5QrcodeSupportedFormats.UPC_A,
+            Html5QrcodeSupportedFormats.UPC_E,
+            Html5QrcodeSupportedFormats.CODE_128,
+            Html5QrcodeSupportedFormats.CODE_39,
+            Html5QrcodeSupportedFormats.QR_CODE
+        ]
+    };
+
+    html5QrCodeScanner = new Html5Qrcode("reader");
+    
+    html5QrCodeScanner.start(
+        { facingMode: "environment" },
+        config,
+        onScanSuccess,
+        onScanFailure
+    ).then(() => {
+        isScanning = true;
+        startBtn.disabled = true;
+        stopBtn.disabled = false;
+        statusDiv.textContent = '📷 Scanning... Point camera at barcode';
+        statusDiv.className = 'scan-status scanning';
+        statusDiv.style.display = 'block';
+        console.log('Camera started successfully');
+        
+        // 가이드 메시지 표시
+        showScanGuide();
+        
+        setTimeout(() => {
+            readerDiv.scrollIntoView({ 
+                behavior: 'smooth', 
+                block: 'center' 
+            });
+        }, 300);
+    }).catch((err) => {
+        console.error('Camera start error:', err);
+        
+        // 에러 타입별 사용자 친화적 메시지
+        let userMessage = '';
+        const errorString = err.toString().toLowerCase();
+        
+        if (errorString.includes('notallowederror') || 
+            errorString.includes('permissiondeniederror') || 
+            errorString.includes('not allowed')) {
+            userMessage = `
+                <div style="line-height: 1.5;">
+                    <strong>📷 카메라 권한이 필요합니다</strong>
+                    <strong>🔹 Camera permission is required</strong>
+                    • 브라우저 설정에서 카메라를 허용해주세요<br>
+                    • Please allow camera access in your browser settings
+                </div>
+            `;
+        } else if (errorString.includes('notfounderror') || 
+                errorString.includes('not found')) {
+            userMessage = `
+                <div style="line-height: 1.5;">
+                    <strong>📷 카메라를 찾을 수 없습니다</strong>
+                    <strong>🔹 Camera not found</strong>
+                    • 기기에 카메라가 연결되어 있는지 확인하세요<br>
+                    • Please check if your device has a camera
+                </div>
+            `;
+        } else if (errorString.includes('notreadableerror') || 
+                errorString.includes('not readable')) {
+            userMessage = `
+                <div style="line-height: 1.5;">
+                    <strong>📷 카메라가 이미 사용 중입니다</strong>
+                    <strong>🔹 Camera is already in use</strong>
+                    • 다른 앱을 닫고 다시 시도하세요<br>
+                    • Please close other apps using the camera
+                </div>
+            `;
+        } else {
+            userMessage = `
+                <div style="line-height: 1.5;">
+                    <strong>📷 카메라 시작 실패</strong>
+                    <strong>🔹 Failed to start camera</strong>
+                    • 페이지를 새로고침하고 다시 시도하세요<br>
+                    • Please refresh the page and try again
+                </div>
+            `;
+        }
+        showError(userMessage);
+        isScanning = false;
+        html5QrCodeScanner = null;
+        
+        // 상태 메시지도 업데이트
+        statusDiv.textContent = '❌ Camera access denied';
+        statusDiv.className = 'scan-status error';
+        statusDiv.style.display = 'block';
+    });
+}
+
 
     // 스캔 가이드 메시지 표시
     function showScanGuide() {
